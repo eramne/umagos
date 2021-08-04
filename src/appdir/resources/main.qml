@@ -15,7 +15,7 @@ Item {
 
     ListView {
         id: inputFileView
-
+        // @disable-check M16
         objectName: "inputFileView"
         visible: true
         clip: true

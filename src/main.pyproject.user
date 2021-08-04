@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.15.0, 2021-08-04T10:40:55. -->
+<!-- Written by QtCreator 4.15.0, 2021-08-04T11:49:06. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -255,6 +255,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">C:/Users/owner/Desktop/umagos/src/conversionthread.py</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">PythonEditor.RunConfiguration.C:/Users/owner/Desktop/umagos/src/conversionthread.py</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Users/owner/Desktop/umagos/src/conversionthread.py</value>
+    <value type="QString" key="PythonEditor.RunConfiguation.Interpreter">{53554ad6-7c99-45ad-9482-2144366229d8}</value>
     <value type="QString" key="PythonEditor.RunConfiguation.Script">C:\Users\owner\Desktop\umagos\src\conversionthread.py</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
@@ -336,7 +337,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseTerminal">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory">C:/Users/owner/Desktop/umagos/workingdir</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory">C:/Users/owner/Desktop/umagos/src/appdir</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/Users/owner/Desktop/umagos/src</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">3</value>

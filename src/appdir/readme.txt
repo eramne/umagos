@@ -1,0 +1,1 @@
+all files in this directory are copied to the .exe's containing directory after building. also used for running in qt creator. didn't know what else to call it, so i just named it appdir
