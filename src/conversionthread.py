@@ -71,7 +71,7 @@ def convert(inPath, iteration, total):
         try:
             signalHandler.logEvent.emit(theme.INFOTEXT, "File {0}/{1}, converting file {2}{3} from {3} to {4}. Full path of original: {5}".format(iteration+1, total, inName, inExt, targetExt, inPath))
             process = QProcess()
-            process.start(QDir.currentPath() + "/magick.exe", arguments)
+            process.start(QDir.currentPath() + "/magick", arguments)
             process.waitForStarted(-1)
             process.waitForFinished(-1)
         except Exception as e:
