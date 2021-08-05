@@ -135,7 +135,7 @@ if __name__ == "__main__":
 
     signalHandler.logEvent.emit(theme.INFOTEXT,"Info, errors, and warnings will appear here.")
 
-    view.setTitle("Hello World!")
+    view.setTitle("umagos")
     view.show()
 
     res = app.exec_()

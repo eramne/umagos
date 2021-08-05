@@ -6,4 +6,4 @@ dist/
 */__pycache__/
 src/main.pyproject.user
 src/main.pyproject.user.f99c668
-
+src/__pycache__/
