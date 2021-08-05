@@ -8,7 +8,7 @@ import os
 import shutil
 from theme import theme
 
-from PySide2.QtCore import QObject, QProcess, QDir
+from PySide2.QtCore import QObject, QProcess, QDir, QTextCodec
 
 conversionThread = None
 abort = False
@@ -67,13 +67,19 @@ def convert(inPath, iteration, total):
     outFile = getUsableName("{0}/{1}{2}".format(outPath, inName, targetExt), inPath)
     if inExt != targetExt:
         # arguments = "convert \"{0}\" \"{1}\"".format(inPath, outFile)
-        arguments = ["convert", inPath, outFile]
+        arguments = " ".join(["convert", f'"{inPath}"', f'"{outFile}"'])
         try:
             signalHandler.logEvent.emit(theme.INFOTEXT, "File {0}/{1}, converting file {2}{3} from {3} to {4}. Full path of original: {5}".format(iteration+1, total, inName, inExt, targetExt, inPath))
             process = QProcess()
-            process.start(QDir.currentPath() + "/magick", arguments)
+            # magickPath = os.path.join(QDir.currentPath(), "/magick")
+            # magickPath = "./magick"
+            magickPath = QDir.currentPath() + "/magick"
+            print(magickPath, arguments)
+            process.start(magickPath, arguments)
             process.waitForStarted(-1)
             process.waitForFinished(-1)
+            process.waitForReadyRead(-1)
+            print(QTextCodec.codecForMib(4).toUnicode(process.readAllStandardOutput()))
         except Exception as e:
             signalHandler.logEvent.emit(theme.ERRORTEXT, e)
     else:

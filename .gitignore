@@ -4,3 +4,6 @@ dist/
 *.spec
 .git/
 */__pycache__/
+src/main.pyproject.user
+src/main.pyproject.user.f99c668
+
