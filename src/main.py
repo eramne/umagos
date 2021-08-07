@@ -119,7 +119,12 @@ if __name__ == "__main__":
     backend = Backend()
     context.setContextProperty("backend", backend)
 
-    qml_file = os.path.join(QDir.currentPath(), 'resources/main.qml')
+    appdir = QDir.currentPath()
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        appdir = os.path.dirname(sys.executable)
+    conversionthread.appdir = appdir
+
+    qml_file = os.path.join(appdir, 'resources/main.qml')
     view.setSource(QUrl.fromLocalFile(qml_file))
     if view.status() == QQuickView.Error:
         sys.exit(-1)
@@ -129,7 +134,7 @@ if __name__ == "__main__":
     context.setContextProperty("signalHandler", signalHandler)
 
     conversionthread.supportedImageFormats = supportedImageFormats
-    conversionthread.outPath = QDir.currentPath() + "/tmp/converted"
+    conversionthread.outPath = appdir + "/tmp/converted"
 
     conversionthread.clearOutputDir()
 

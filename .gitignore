@@ -11,3 +11,4 @@ src/__pycache__/
 *.user
 */main.pyproject.user
 *.pyc
+umagos.spec

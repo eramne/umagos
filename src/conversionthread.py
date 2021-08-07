@@ -6,9 +6,10 @@
 import threading
 import os
 import shutil
+import platform
 from theme import theme
 
-from PySide2.QtCore import QObject, QProcess, QDir, QTextCodec
+from PySide2.QtCore import QObject, QProcess
 
 conversionThread = None
 abort = False
@@ -21,6 +22,7 @@ filePathQueue = None
 supportedImageFormats = None
 targetExt = None
 outPath = None
+appdir = None
 
 
 def startStopConversion():
@@ -65,20 +67,20 @@ def convert(inPath, iteration, total):
     inName = os.path.splitext(os.path.basename(inPath))[0]
     inExt = os.path.splitext(os.path.basename(inPath))[1].lower()
     outFile = getUsableName("{0}/{1}{2}".format(outPath, inName, targetExt), inPath)
-    if inExt != targetExt:
-        arguments = ["convert", inPath, outFile]
-        try:
-            signalHandler.logEvent.emit(theme.INFOTEXT, "File {0}/{1}, converting file {2}{3} from {3} to {4}. Full path of original: {5}".format(iteration+1, total, inName, inExt, targetExt, inPath))
-            process = QProcess()
-            magickPath = QDir.currentPath() + "/magick"
-            process.start(magickPath, arguments)
-            process.waitForStarted(-1)
-            process.waitForFinished(-1)
-        except Exception as e:
-            signalHandler.logEvent.emit(theme.ERRORTEXT, e)
-    else:
-        signalHandler.logEvent.emit(theme.INFOTEXT, "File {0}/{1}, file {2} is already of desired type, copying to output folder. Full path of original: {3}".format(iteration+1, total, inName, inPath))
-        shutil.copy2(inPath, outFile)
+    arguments = ["convert", inPath, outFile]
+    try:
+        signalHandler.logEvent.emit(theme.INFOTEXT, "File {0}/{1}, converting file {2}{3} from {3} to {4}. Full path of original: {5}".format(iteration+1, total, inName, inExt, targetExt, inPath))
+        process = QProcess()
+        magickPath = appdir + "/magick"
+        if platform.system() == "Darwin":
+            # assumes imagemagick is installed with homebrew on macOS
+            os.environ["PATH"] = "/usr/local/bin:" + os.environ["PATH"]
+            magickPath = shutil.which("magick")
+        process.start(magickPath, arguments)
+        process.waitForStarted(-1)
+        process.waitForFinished(-1)
+    except Exception as e:
+        print(e)
     signalHandler.outputFilesUpdateEvent.emit()
     signalHandler.progressEvent.emit(iteration + 1, total)
 
