@@ -45,6 +45,7 @@ def startConversion():
     view.rootObject().findChild(QObject, "inputFileViewDropArea").setAcceptDrop(False)
     view.rootObject().findChild(QObject, "btn_clearInputSelection")._setEnabled(False)
     view.rootObject().findChild(QObject, "outputFormatBox")._setEnabled(False)
+    view.rootObject().findChild(QObject, "outFormatLabel").setProperty("opacity", 0.5)
 
 
 def threadTask():

@@ -13,68 +13,104 @@ Item {
         color: "white"
     }
 
-    ListView {
-        id: inputFileView
-        // @disable-check M16
-        objectName: "inputFileView"
-        visible: true
-        clip: true
-        boundsBehavior: Flickable.DragOverBounds
-        flickableDirection: Flickable.VerticalFlick
-        spacing: 0
+    ScrollView {
         x: 90
         y: 112
         width: 188
         height: 184
+        clip: true
 
-        function updateList(paths) {
-            inputFileModel.clear();
-            paths.forEach( function (item) {
-                inputFileModel.append({
-                    'name': item
+        function scroll(val, horiz = false) {
+            var scrollbar = horiz ? ScrollBar.horizontal : ScrollBar.vertical;
+            scrollbar.stepSize = val;
+            scrollbar.decrease();
+            scrollbar.stepSize = 0;
+            inputFileView.returnToBounds();
+            inputFileView.contentX -= inputFileView.horizontalOvershoot;
+            console.log(inputFileView.horizontalOvershoot);
+        }
+
+        ListView {
+            id: inputFileView
+            objectName: "inputFileView"
+            visible: true
+            flickDeceleration: 3000
+            flickableDirection: Flickable.HorizontalAndVerticalFlick
+            implicitWidth: contentItem.childrenRect.width
+            anchors.fill: parent
+            interactive: false
+            //boundsBehavior: Flickable.DragOverBounds
+            //maximumFlickVelocity: 3000
+            //flickDeceleration: 10000
+            spacing: 0
+
+            function updateList(paths) {
+                inputFileModel.clear();
+                paths.forEach( function (item) {
+                    inputFileModel.append({
+                        'name': item
+                    });
                 });
-            });
-        }
-
-        model: ListModel {
-            id: inputFileModel
-        }
-        delegate: Item {
-            x: 5
-            width: 80
-            height: 20
-            Row {
-                Text {
-                    text: name
-                    anchors.verticalCenter: parent.verticalCenter
-                    font.pointSize: 10
-                    font.family: "Arial"
+                var max = 0;
+                for(var i = 0; i < inputFileView.count; i++) {
+                    inputFileView.currentIndex = i
+                    var itemWidth = inputFileView.currentItem.x + inputFileView.currentItem.childrenRect.width
+                    max = Math.max(max, itemWidth)
                 }
-                spacing: 10
-            }
-        }
-
-        Rectangle {
-            anchors.fill: parent
-            border.color: "black"
-            border.width: 1
-            color: "transparent"
-        }
-
-        DropArea {
-            anchors.fill: parent
-            id: inputFileViewDropArea
-            // @disable-check M16
-            objectName: "inputFileViewDropArea"
-            onDropped: function (drop) {
-                drop.urls.forEach( function (url) {
-                    backend.addToPaths(url)
-                });
+                inputFileView.contentWidth = max + 5; //+5 to add some extra padding
+                inputFileView.parent.scroll(1);
+                inputFileView.parent.scroll(1, true);
             }
 
-            function setAcceptDrop(value) {
-                inputFileView.opacity = value ? 1 : 0.5;
-                enabled = value;
+            WheelHandler {
+                //acceptedDevices: PointerDevice.TouchPad
+                onWheel: {
+                    var delta = event.hasPixelDelta ? event.pixelDelta : event.angleDelta;
+                    //console.log(delta);
+                    if (event.modifiers & Qt.ShiftModifier) {
+                        inputFileView.parent.scroll(delta.y/3000, true)
+                    } else {
+                        inputFileView.parent.scroll(delta.y/3000)
+                    }
+                }
+            }
+
+            model: ListModel {
+                id: inputFileModel
+            }
+            delegate: Item {
+                x: 5
+                height: 20
+                Row {
+                    Text {
+                        text: name
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pixelSize: 12
+                    }
+                }
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                border.color: "black"
+                border.width: 1
+                color: "transparent"
+            }
+
+            DropArea {
+                anchors.fill: parent
+                id: inputFileViewDropArea
+                objectName: "inputFileViewDropArea"
+                onDropped: function (drop) {
+                    drop.urls.forEach( function (url) {
+                        backend.addToPaths(url)
+                    });
+                }
+
+                function setAcceptDrop(value) {
+                    inputFileView.opacity = value ? 1 : 0.5;
+                    enabled = value;
+                }
             }
         }
     }
@@ -85,8 +121,6 @@ Item {
         objectName: "outputFileView"
         visible: true
         clip: true
-        boundsBehavior: Flickable.DragOverBounds
-        flickableDirection: Flickable.VerticalFlick
         spacing: 0
         x: 390
         y: 112
@@ -113,8 +147,7 @@ Item {
                 Text {
                     text: name
                     anchors.verticalCenter: parent.verticalCenter
-                    font.pointSize: 10
-                    font.family: "Arial"
+                    font.pixelSize: 12
                 }
                 spacing: 10
             }
@@ -187,7 +220,9 @@ Item {
     }
 
     Text {
-        id: text1
+        id: outFormatLabel
+        // @disable-check M16
+        objectName: "outFormatLabel"
         x: 296
         y: 44
         width: 134
