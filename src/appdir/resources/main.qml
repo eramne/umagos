@@ -26,6 +26,22 @@ Item {
             border.color: "black"
             border.width: 1
             color: "transparent"
+
+            DropArea {
+                anchors.fill: parent
+                id: inputFileViewDropArea
+                objectName: "inputFileViewDropArea"
+                onDropped: function (drop) {
+                    drop.urls.forEach( function (url) {
+                        backend.addToPaths(url)
+                    });
+                }
+
+                function setAcceptDrop(value) {
+                    inputFileView.opacity = value ? 1 : 0.5;
+                    enabled = value;
+                }
+            }
         }
 
         BetterScrollFlickable {
@@ -37,26 +53,10 @@ Item {
             Text {
                 id: inputFileView
                 objectName: "inputFileView"
-                text: "bietuqhbutigoruawbghiuebhgutrwibhtwrbhwiurbhourtwbwebhwruibhr\nabigbheuiahbeiuthbrtuhbrbuwth\nerhaeahtweh\neahsrthrstyh\ntrshsrthsrt\nsrthtsrhstrh\nsrthtrshs\nsrthtsrhstr\nsrth\nshtr\nsrth\nhtr\nhtr\nhtr\nhtr\nhtr\nhtr\nhsths\nhat\nath\nhat\ntarh\natrh\narthraneoir"
+                text: ""
                 anchors.fill: parent
                 font.pixelSize: 12
-                parent: inputFileViewFlickable.contentItem
-
-                DropArea {
-                    anchors.fill: parent
-                    id: inputFileViewDropArea
-                    objectName: "inputFileViewDropArea"
-                    onDropped: function (drop) {
-                        drop.urls.forEach( function (url) {
-                            backend.addToPaths(url)
-                        });
-                    }
-
-                    function setAcceptDrop(value) {
-                        inputFileView.opacity = value ? 1 : 0.5;
-                        enabled = value;
-                    }
-                }
+                //parent: inputFileViewFlickable.contentItem
 
                 function updateList(paths) {
                     inputFileView.text = "";
@@ -70,53 +70,21 @@ Item {
         }
     }
 
-    ListView {
-        id: outputFileView
-        // @disable-check M16
-        objectName: "outputFileView"
-        visible: true
-        clip: true
-        spacing: 0
+    ScrollView {
+        id: outputFileScrollView
         x: 390
         y: 112
         width: 188
         height: 184
+        clip: true
+        property var outputFiles: []
 
-        function updateList(paths) {
-            outputFileModel.clear();
-            paths.forEach( function (item) {
-                outputFileModel.append({
-                    'name': item
-                });
-            });
-        }
-
-        model: ListModel {
-            id: outputFileModel
-        }
-        delegate: Item {
-            x: 5
-            width: 80
-            height: 20
-            Row {
-                Text {
-                    text: name
-                    anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 12
-                }
-                spacing: 10
-            }
-        }
-
-        Rectangle {
+        background: Rectangle {
             anchors.fill: parent
             border.color: "black"
             border.width: 1
             color: "transparent"
-        }
 
-        Item {
-            anchors.fill: parent
             Drag.active: dragArea.drag.active
             Drag.dragType: Drag.Automatic
             Drag.supportedActions: Qt.CopyAction
@@ -133,10 +101,35 @@ Item {
                     parent.Drag.imageSource = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D";
                     signalHandler.onOutputFileUpdate()
                     var urls = "";
-                    for (var i = 0; i < outputFileModel.count; i++) {
-                        urls += backend.getOutputPathUrl() + "/" + outputFileModel.get(i).name + "\r\n"
+                    for (var i = 0; i < outputFileScrollView.outputFiles.length; i++) {
+                        urls += backend.getOutputPathUrl() + "/" + outputFileScrollView.outputFiles[i] + "\r\n"
                     }
                     parent.Drag.mimeData = {"text/uri-list": urls};
+                }
+            }
+        }
+
+        BetterScrollFlickable {
+            id: outputFileViewFlickable
+            flickableDirection: Flickable.HorizontalAndVerticalFlick
+            contentWidth: outputFileView.implicitWidth
+            contentHeight: outputFileView.implicitHeight
+
+            Text {
+                id: outputFileView
+                objectName: "outputFileView"
+                text: ""
+                anchors.fill: parent
+                font.pixelSize: 12
+
+                function updateList(paths) {
+                    outputFileScrollView.outputFiles = paths;
+                    outputFileView.text = "";
+                    paths.forEach( function (item) {
+                        outputFileView.text += item + "\r\n"
+                    });
+                    outputFileViewFlickable.scroll(1);
+                    outputFileViewFlickable.scroll(1, true);
                 }
             }
         }

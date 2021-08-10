@@ -26,9 +26,9 @@ Flickable {
         onWheel: {
             var delta = event.hasPixelDelta ? event.pixelDelta : event.angleDelta;
             if (event.modifiers & Qt.ShiftModifier) {
-                inputFileViewFlickable.scroll(delta.y/3000, true)
+                flickable.scroll(delta.y/3000, true)
             } else {
-                inputFileViewFlickable.scroll(delta.y/3000)
+                flickable.scroll(delta.y/3000)
             }
         }
     }
