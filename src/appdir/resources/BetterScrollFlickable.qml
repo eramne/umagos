@@ -7,8 +7,7 @@ Flickable {
     visible: true
     interactive: false
     flickableDirection: Flickable.HorizontalAndVerticalFlick
-    //contentWidth: inputFileView.implicitWidth
-    //contentHeight: inputFileView.implicitHeight
+    property real sensitivity: 1
 
     function scroll(val, horiz = false) {
         var scrollbar = horiz ? parent.ScrollBar.horizontal : parent.ScrollBar.vertical;
@@ -22,13 +21,13 @@ Flickable {
     }
 
     WheelHandler {
-        //acceptedDevices: PointerDevice.TouchPad
+        target: flickable.parent
         onWheel: {
             var delta = event.hasPixelDelta ? event.pixelDelta : event.angleDelta;
             if (event.modifiers & Qt.ShiftModifier) {
-                flickable.scroll(delta.y/3000, true)
+                flickable.scroll((delta.y/3000)*sensitivity, true)
             } else {
-                flickable.scroll(delta.y/3000)
+                flickable.scroll((delta.y/3000)*sensitivity)
             }
         }
     }

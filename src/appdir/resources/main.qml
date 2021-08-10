@@ -47,6 +47,7 @@ Item {
         BetterScrollFlickable {
             id: inputFileViewFlickable
             flickableDirection: Flickable.HorizontalAndVerticalFlick
+            anchors.fill: parent
             contentWidth: inputFileView.implicitWidth
             contentHeight: inputFileView.implicitHeight
 
@@ -63,7 +64,7 @@ Item {
                     paths.forEach( function (item) {
                         inputFileView.text += item + "\r\n"
                     });
-                    inputFileViewFlickable.scroll(1);
+                    inputFileViewFlickable.scroll(-1);
                     inputFileViewFlickable.scroll(1, true);
                 }
             }
@@ -128,7 +129,7 @@ Item {
                     paths.forEach( function (item) {
                         outputFileView.text += item + "\r\n"
                     });
-                    outputFileViewFlickable.scroll(1);
+                    outputFileViewFlickable.scroll(-1);
                     outputFileViewFlickable.scroll(1, true);
                 }
             }
@@ -213,7 +214,6 @@ Item {
 
     ScrollView {
         id: logScrollView
-        // @disable-check M16
         objectName: "logScrollView"
         x: 90
         y: 333
@@ -222,24 +222,32 @@ Item {
         height: 110
 
         function scrollToBottom() {
-            ScrollBar.vertical.position = 1.0 - ScrollBar.vertical.size
-            ScrollBar.horizontal.position = 0
+            logFlickable.scroll(-1);
+            logFlickable.scroll(1, true);
         }
 
-        Text {
-            id: log
-            // @disable-check M16
-            objectName: "log"
+        BetterScrollFlickable {
+            id: logFlickable
+            flickableDirection: Flickable.HorizontalAndVerticalFlick
             anchors.fill: parent
-            text: ""
-            font.pixelSize: 12
-            lineHeight: 0.25
-            bottomPadding: 20
-            textFormat: Text.RichText
+            contentWidth: log.implicitWidth
+            contentHeight: log.implicitHeight
+            sensitivity: 3
 
-            Rectangle {
+            Text {
+                id: log
+                objectName: "log"
                 anchors.fill: parent
-                visible: false
+                text: ""
+                font.pixelSize: 12
+                lineHeight: 0.25
+                bottomPadding: 20
+                textFormat: Text.RichText
+
+                Rectangle {
+                    anchors.fill: parent
+                    visible: false
+                }
             }
         }
     }
