@@ -12,6 +12,7 @@ from theme import theme
 from PySide2.QtCore import QObject, QProcess
 
 conversionThread = None
+process = None
 abort = False
 
 # initialized in main.py to avoid circular dependency
@@ -30,6 +31,8 @@ def startStopConversion():
     global abort
     if type(conversionThread) is threading.Thread:
         if conversionThread.is_alive():
+            if type(process) is QProcess:
+                process.kill()
             abort = True
         else:
             startConversion()
@@ -65,6 +68,7 @@ def threadTask():
 
 
 def convert(inPath, iteration, total):
+    global process
     inName = os.path.splitext(os.path.basename(inPath))[0]
     inExt = os.path.splitext(os.path.basename(inPath))[1].lower()
     outFile = getUsableName("{0}/{1}{2}".format(outPath, inName, targetExt), inPath)
