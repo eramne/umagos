@@ -57,13 +57,14 @@ Item {
                 text: ""
                 anchors.fill: parent
                 font.pixelSize: 12
-                //parent: inputFileViewFlickable.contentItem
+                padding: 5
 
                 function updateList(paths) {
                     inputFileView.text = "";
                     paths.forEach( function (item) {
                         inputFileView.text += item + "\r\n";
                     });
+                    inputFileView.text = inputFileView.text.trim();
                     inputFileViewFlickable.scrollToBottom();
                 }
             }
@@ -114,6 +115,7 @@ Item {
             flickableDirection: Flickable.HorizontalAndVerticalFlick
             contentWidth: outputFileView.implicitWidth
             contentHeight: outputFileView.implicitHeight
+            anchors.fill: parent
 
             Text {
                 id: outputFileView
@@ -121,6 +123,7 @@ Item {
                 text: ""
                 anchors.fill: parent
                 font.pixelSize: 12
+                padding: 5
 
                 function updateList(paths) {
                     outputFileScrollView.outputFiles = paths;
@@ -128,6 +131,7 @@ Item {
                     paths.forEach( function (item) {
                         outputFileView.text += item + "\r\n"
                     });
+                    outputFileView.text = outputFileView.text.trim();
                     outputFileViewFlickable.scrollToBottom();
                 }
             }
@@ -219,6 +223,13 @@ Item {
         width: 488
         height: 110
 
+        background: Rectangle {
+            anchors.fill: parent
+            border.color: "black"
+            border.width: 1
+            color: "transparent"
+        }
+
         BetterScrollFlickable {
             id: logFlickable
             objectName: "logFlickable"
@@ -234,6 +245,7 @@ Item {
                 text: ""
                 font.pixelSize: 12
                 lineHeight: 0.25
+                padding: 5
                 bottomPadding: 20
                 textFormat: Text.RichText
 
