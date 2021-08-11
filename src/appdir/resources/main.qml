@@ -33,7 +33,7 @@ Item {
                 objectName: "inputFileViewDropArea"
                 onDropped: function (drop) {
                     drop.urls.forEach( function (url) {
-                        backend.addToPaths(url)
+                        backend.addToPaths(url);
                     });
                 }
 
@@ -62,10 +62,9 @@ Item {
                 function updateList(paths) {
                     inputFileView.text = "";
                     paths.forEach( function (item) {
-                        inputFileView.text += item + "\r\n"
+                        inputFileView.text += item + "\r\n";
                     });
-                    inputFileViewFlickable.scroll(-1);
-                    inputFileViewFlickable.scroll(1, true);
+                    inputFileViewFlickable.scrollToBottom();
                 }
             }
         }
@@ -129,8 +128,7 @@ Item {
                     paths.forEach( function (item) {
                         outputFileView.text += item + "\r\n"
                     });
-                    outputFileViewFlickable.scroll(-1);
-                    outputFileViewFlickable.scroll(1, true);
+                    outputFileViewFlickable.scrollToBottom();
                 }
             }
         }
@@ -221,18 +219,13 @@ Item {
         width: 488
         height: 110
 
-        function scrollToBottom() {
-            logFlickable.scroll(-1);
-            logFlickable.scroll(1, true);
-        }
-
         BetterScrollFlickable {
             id: logFlickable
+            objectName: "logFlickable"
             flickableDirection: Flickable.HorizontalAndVerticalFlick
             anchors.fill: parent
             contentWidth: log.implicitWidth
             contentHeight: log.implicitHeight
-            sensitivity: 3
 
             Text {
                 id: log

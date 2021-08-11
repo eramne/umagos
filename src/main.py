@@ -96,7 +96,7 @@ class CustomSignalHandler(QObject):
         logText = logObject.property("text")
         logText += "<p style='color: {0}'>{1}</p>\n".format(color, text)
         logObject.setProperty("text", logText)
-        view.rootObject().findChild(QObject, "logScrollView").scrollToBottom()
+        view.rootObject().findChild(QObject, "logFlickable").scrollToBottom()
 
     progressEvent = Signal(int, int)
 
