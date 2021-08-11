@@ -14,8 +14,10 @@ from PySide2.QtQuickControls2 import QQuickStyle
 from PySide2.QtGui import QGuiApplication
 
 paths = []
-supportedImageFormats = [".png", ".jpeg", ".jpg", ".heic", ".heif", ".gif",
-                         ".bmp", ".psd", ".tiff", ".hdr", ".exr", ".webp"]
+supportedFormats = {
+    "images": [".png", ".jpeg", ".jpg", ".heic", ".heif", ".gif",
+               ".bmp", ".psd", ".tiff", ".hdr", ".exr", ".webp"]
+}
 
 
 def uri_to_path(uri):
@@ -46,9 +48,9 @@ class Backend(QObject):
         paths.clear()
         self.updateInputFilesList()
 
-    @Slot(result=list)
-    def getSupportedImageFormats(self):
-        return supportedImageFormats
+    @Slot(result="QVariantMap")
+    def getSupportedFormats(self):
+        return supportedFormats
 
     @Slot()
     def callConversion(self):
@@ -109,6 +111,9 @@ class CustomSignalHandler(QObject):
 
 if __name__ == "__main__":
     app = QGuiApplication(sys.argv)
+    app.setOrganizationName("eramne")
+    app.setOrganizationDomain("eramne.com")
+    app.setApplicationName("umagos")
 
     view = QQuickView()
     conversionthread.app = app
@@ -134,7 +139,7 @@ if __name__ == "__main__":
     conversionthread.signalHandler = signalHandler
     context.setContextProperty("signalHandler", signalHandler)
 
-    conversionthread.supportedImageFormats = supportedImageFormats
+    conversionthread.supportedFormats = supportedFormats
     conversionthread.outPath = appdir + "/tmp/converted"
 
     conversionthread.clearOutputDir()

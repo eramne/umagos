@@ -20,7 +20,7 @@ view = None
 app = None
 signalHandler = None
 filePathQueue = None
-supportedImageFormats = None
+supportedFormats = None
 targetExt = None
 outPath = None
 appdir = None
@@ -92,7 +92,7 @@ def convert(inPath, iteration, total):
 
 def errorCheck():
     global filePathQueue
-    global supportedImageFormats
+    global supportedFormats
     if len(filePathQueue) > 0:
         tempOldCount = len(filePathQueue)
         filePathQueue = list(dict.fromkeys(filePathQueue))
@@ -106,7 +106,7 @@ def errorCheck():
         for i in range(len(filePathQueue)):
             path = filePathQueue[i]
             ext = os.path.splitext(filePathQueue[i])[1].lower()
-            if ext not in supportedImageFormats:
+            if ext not in supportedFormats["images"]:
                 if ext not in unsupportedFormats:
                     unsupportedFormats.append(ext)
                 numFilesUnsupported += 1

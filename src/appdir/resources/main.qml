@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Window 2.14
 import QtQuick.Controls 2.3
+import QtQuick.Dialogs 1.0
 
 Item {
     id: window
@@ -140,7 +141,6 @@ Item {
 
     Button {
         id: btn_clearInputSelection
-        // @disable-check M16
         objectName: "btn_clearInputSelection"
         x: 90
         y: 302
@@ -157,8 +157,19 @@ Item {
     }
 
     Button {
+        id: openFileButton
+        x: 193
+        y: 302
+        width: 79
+        height: 25
+        text: qsTr("Open Files")
+        onClicked: {
+            openFileDialog.visible = true;
+        }
+    }
+
+    Button {
         id: btn_convert
-        // @disable-check M16
         objectName: "btn_convert"
         x: 285
         y: 192
@@ -172,7 +183,6 @@ Item {
 
     Text {
         id: outFormatLabel
-        // @disable-check M16
         objectName: "outFormatLabel"
         x: 296
         y: 44
@@ -184,7 +194,6 @@ Item {
 
     ComboBox {
         id: outputFormatBox
-        // @disable-check M16
         objectName: "outputFormatBox"
         x: 436
         y: 35
@@ -198,9 +207,8 @@ Item {
             });
         }
 
-        // @disable-check M16
         Component.onCompleted: {
-            updateList(backend.getSupportedImageFormats());
+            updateList(backend.getSupportedFormats().images);
             currentIndex = 0;
         }
 
@@ -259,7 +267,6 @@ Item {
 
     ProgressBar {
         id: progressBar
-        // @disable-check M16
         objectName: "progressBar"
         x: 90
         y: 450
@@ -267,5 +274,24 @@ Item {
         height: 22
         to: 1
         value: 0
+    }
+
+    FileDialog {
+        id: openFileDialog
+        objectName: "openFileDialog"
+        title: "Open files"
+        folder: shortcuts.home
+        selectExisting: true
+        selectMultiple: true
+        nameFilters: ["All files (*)"]
+        onAccepted: {
+            openFileDialog.fileUrls.forEach( function (url) {
+                backend.addToPaths(url);
+            });
+        }
+        Component.onCompleted: {
+            var formats = backend.getSupportedFormats();
+            nameFilters.unshift("Image files (*" + formats.images.join(" *") + ")");
+        }
     }
 }
