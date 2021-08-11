@@ -44,11 +44,7 @@ def startConversion():
     global conversionThread
     conversionThread = threading.Thread(target=threadTask, args=())
     conversionThread.start()
-    view.rootObject().findChild(QObject, "btn_convert").setProperty("text", "Cancel")
-    view.rootObject().findChild(QObject, "inputFileViewDropArea").setAcceptDrop(False)
-    view.rootObject().findChild(QObject, "btn_clearInputSelection")._setEnabled(False)
-    view.rootObject().findChild(QObject, "outputFormatBox")._setEnabled(False)
-    view.rootObject().findChild(QObject, "outFormatLabel").setProperty("opacity", 0.5)
+    view.rootObject().setFileControlsEnabled(False)
 
 
 def threadTask():

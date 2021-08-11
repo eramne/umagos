@@ -9,6 +9,16 @@ Item {
     height: 480
     visible: true
 
+    function setFileControlsEnabled(value) {
+        convertButton.text = value ? "Convert" : "Cancel";
+        inputFileViewDropArea.setAcceptDrop(value);
+        clearInputSelectionButton._setEnabled(value);
+        outputFormatBox._setEnabled(value);
+        outFormatLabel.opacity = value ? 1 : 0.5;
+        openFileButton._setEnabled(value);
+        openFromClipboardButton._setEnabled(value);
+    }
+
     Rectangle {
         anchors.fill: parent
         color: "white"
@@ -39,7 +49,7 @@ Item {
                 }
 
                 function setAcceptDrop(value) {
-                    inputFileView.opacity = value ? 1 : 0.5;
+                    inputFileScrollView.opacity = value ? 1 : 0.5;
                     enabled = value;
                 }
             }
@@ -140,7 +150,7 @@ Item {
     }
 
     Button {
-        id: btn_clearInputSelection
+        id: clearInputSelectionButton
         objectName: "btn_clearInputSelection"
         x: 90
         y: 302
@@ -166,6 +176,10 @@ Item {
         onClicked: {
             openFileDialog.visible = true;
         }
+        function _setEnabled(value) {
+            opacity = value ? 1 : 0.5;
+            enabled = value;
+        }
     }
 
     Button {
@@ -180,10 +194,14 @@ Item {
                 backend.addToPaths(url);
             });
         }
+        function _setEnabled(value) {
+            opacity = value ? 1 : 0.5;
+            enabled = value;
+        }
     }
 
     Button {
-        id: btn_convert
+        id: convertButton
         objectName: "btn_convert"
         x: 285
         y: 192

@@ -80,11 +80,7 @@ class CustomSignalHandler(QObject):
 
     @Slot()
     def onFinish(self):
-        view.rootObject().findChild(QObject, "btn_convert").setProperty("text", "Convert")
-        view.rootObject().findChild(QObject, "inputFileViewDropArea").setAcceptDrop(True)
-        view.rootObject().findChild(QObject, "btn_clearInputSelection")._setEnabled(True)
-        view.rootObject().findChild(QObject, "outputFormatBox")._setEnabled(True)
-        view.rootObject().findChild(QObject, "outFormatLabel").setProperty("opacity", 1)
+        view.rootObject().setFileControlsEnabled(True)
         signalHandler.logEvent.emit(theme.SUCCESSTEXT, "Conversion finished.")
 
     outputFilesUpdateEvent = Signal()
