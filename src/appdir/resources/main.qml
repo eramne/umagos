@@ -158,13 +158,27 @@ Item {
 
     Button {
         id: openFileButton
-        x: 193
+        x: 196
         y: 302
         width: 79
         height: 25
         text: qsTr("Open Files")
         onClicked: {
             openFileDialog.visible = true;
+        }
+    }
+
+    Button {
+        id: openFromClipboardButton
+        x: 281
+        y: 302
+        width: 79
+        height: 25
+        text: qsTr("Paste files")
+        onClicked: {
+            backend.getClipboardUrls().forEach( function (url) {
+                backend.addToPaths(url);
+            });
         }
     }
 

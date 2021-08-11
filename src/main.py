@@ -62,6 +62,11 @@ class Backend(QObject):
     def getOutputPathUrl(self):
         return Path(conversionthread.outPath).as_uri()
 
+    @Slot(result=list)
+    def getClipboardUrls(self):
+        clipboard = QGuiApplication.clipboard()
+        return clipboard.mimeData().urls()
+
 
 class CustomSignalHandler(QObject):
     def __init__(self):
