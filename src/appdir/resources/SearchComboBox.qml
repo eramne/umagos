@@ -5,11 +5,12 @@ import QtQml.Models 2.2
 ComboBox {
     editable: true
     property int _highlightedIndex: -1
+    id: combobox
 
     function updateList(fileTypes) {
-        imageFormatComboBoxModel.clear();
+        model.clear();
         fileTypes.forEach( function (item) {
-            imageFormatComboBoxModel.append({
+            model.append({
                 'text': item
             });
         });
@@ -17,14 +18,14 @@ ComboBox {
     }
 
     function updateFilteredList(fileTypes) {
-        filteredImageFormatListModel.clear();
+        filteredListModel.clear();
         fileTypes.forEach( function (item) {
             let text = contentItem.text;
             if (contentItem.selectionEnd === contentItem.text.length) {
                 text = text.substring(0, contentItem.selectionStart);
             }
             if (text === currentText || item.startsWith(text)) {
-                filteredImageFormatListModel.append({
+                filteredListModel.append({
                     'text': item
                 });
             }
@@ -32,7 +33,7 @@ ComboBox {
     }
 
     Component.onCompleted: {
-        popup.contentItem.model = filteredImageFormatDelegateModel;
+        popup.contentItem.model = filteredDelegateModel;
         currentIndex = 0;
         popup.y = height - 1;
         popup.closed.connect(onAccepted);
@@ -48,27 +49,27 @@ ComboBox {
     }
 
     model: ListModel {
-        id: imageFormatComboBoxModel
+        id: model
     }
 
     DelegateModel {
-        id: filteredImageFormatDelegateModel
+        id: filteredDelegateModel
         model: ListModel {
-            id: filteredImageFormatListModel
+            id: filteredListModel
         }
         delegate: ItemDelegate {
-            width: outputFormatBox.width
+            width: combobox.width
             contentItem: Text {
                 text: modelData
             }
             onHoveredChanged: {
-                outputFormatBox._highlightedIndex = hovered ? index : -1;
+                combobox._highlightedIndex = hovered ? index : -1;
             }
             onPressed: {
-                outputFormatBox.currentIndex = outputFormatBox.find(modelData);
-                outputFormatBox.focus = false;
+                combobox.currentIndex = combobox.find(modelData);
+                combobox.focus = false;
             }
-            highlighted: outputFormatBox._highlightedIndex === index
+            highlighted: combobox._highlightedIndex === index
         }
     }
 
