@@ -24,7 +24,7 @@ Flickable {
     function scrollToBottom() {
         parent.ScrollBar.vertical.position = 1.0 - parent.ScrollBar.vertical.size;
         parent.ScrollBar.horizontal.position = 0;
-        scroll(0, 0)
+        scroll(0, 0);
     }
 
     WheelHandler {
