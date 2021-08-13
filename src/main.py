@@ -16,8 +16,26 @@ from PySide2.QtGui import QGuiApplication
 paths = []
 supportedFormats = {
     "images": [".png", ".jpeg", ".jpg", ".gif", ".webp", ".bmp",
-               ".heic", ".heif", ".raw", ".psd", ".tiff", ".hdr",
-               ".png"]
+               ".heic", ".raw", ".psd", ".tiff", ".hdr", ".exr",
+               ".aai", ".apng", ".art", ".avif", ".avs", ".bpg",
+               ".bmp", ".bmp2", ".bmp3", ".cin", ".cmyk", ".cmyka",
+               ".dcx", ".dds", ".dib", ".dpx", ".epdf", ".epi",
+               ".eps", ".epsf", ".epsi", ".ept", ".exr", ".farbfeld",
+               ".fax", ".fits", ".fl32", ".flif", ".fpx", ".gif",
+               ".gray", ".graya", ".hdr", ".heic", ".heif", ".hrz",
+               ".html", ".jbig", ".jng", ".jp2", ".jpt", ".j2c",
+               ".j2k", ".jpg", ".jpeg", ".jxr", ".jxl", ".miff",
+               ".mono", ".mng", ".m2v", ".mpeg", ".mpc", ".mpr",
+               ".msl", ".mtv", ".mvg", ".otb", ".p7", ".palm",
+               ".pbm", ".pcd", ".pcds", ".pcx", ".pdb", ".pdf",
+               ".pfm", ".pgm", ".phm", ".picon", ".pict", ".png",
+               ".png00", ".png8", ".png24", ".png32", ".png48", ".png64",
+               ".pnm", ".pocketmod", ".ppm", ".ps", ".ps2", ".ps3",
+               ".psb", ".psd", ".ptif", ".rgb", ".rgba", ".rgf",
+               ".sgi", ".sun", ".svg", ".tga", ".tif", ".tiff",
+               ".txt", ".uyvy", ".vicar", ".viff", ".wbmp", ".wdp",
+               ".webp", ".x", ".xbm", ".xpm", ".xwd", ".ycbcr",
+               ".ycbcra", ".yuv"]
 }
 
 

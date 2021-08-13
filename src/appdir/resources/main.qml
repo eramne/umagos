@@ -235,6 +235,11 @@ Item {
         Component.onCompleted: {
             updateList(backend.getSupportedFormats().images);
         }
+
+        function _setEnabled(value) {
+            opacity = value ? 1 : 0.5;
+            enabled = value;
+        }
     }
 
     ScrollView {

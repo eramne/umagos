@@ -8,6 +8,7 @@ ComboBox {
     id: combobox
     property alias filteredDelegateModel: filteredDelegateModel
     property int separatorIndex: -1
+    property bool searching: false
 
     function updateList(fileTypes) {
         model.clear();
@@ -27,6 +28,7 @@ ComboBox {
             if (contentItem.selectionEnd === contentItem.text.length) {
                 text = text.substring(0, contentItem.selectionStart);
             }
+            combobox.searching = text !== currentText;
             if (text === currentText || (item.startsWith(text) && !tmpAddedFormatList.includes(item))) {
                 filteredListModel.append({
                     'text': item
@@ -72,7 +74,9 @@ ComboBox {
                     width: parent.width * 2/3
                     height: 2
                     color: "#000000"
-                    opacity: index === separatorIndex ? 0.5 : 0
+                    //if the files are being filtered, don't show the line.
+                    //else, if the index where the line should be, show the line, else don't.
+                    opacity: combobox.searching ? 0 : (index === separatorIndex ? 0.5 : 0)
                 }
 
                 color: highlighted ? "#0078D7" : "#FFFFFF"
@@ -127,7 +131,7 @@ ComboBox {
             anchors.fill: parent
             border.color: "black"
             border.width: 1
-            color: "transparent"
+            color: "white"
         }
 
         contentItem: ListView {

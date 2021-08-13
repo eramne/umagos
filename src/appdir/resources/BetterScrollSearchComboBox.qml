@@ -14,7 +14,7 @@ SearchComboBox {
             anchors.fill: parent
             border.color: "black"
             border.width: 1
-            color: "transparent"
+            color: "white"
         }
 
         contentItem: ScrollView {
