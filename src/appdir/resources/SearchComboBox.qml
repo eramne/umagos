@@ -6,6 +6,7 @@ ComboBox {
     editable: true
     property int _highlightedIndex: -1
     id: combobox
+    property alias filteredDelegateModel: filteredDelegateModel
 
     function updateList(fileTypes) {
         model.clear();
@@ -33,7 +34,6 @@ ComboBox {
     }
 
     Component.onCompleted: {
-        popup.contentItem.model = filteredDelegateModel;
         currentIndex = 0;
         popup.y = height - 1;
         popup.closed.connect(onAccepted);
@@ -61,6 +61,9 @@ ComboBox {
             width: combobox.width
             contentItem: Text {
                 text: modelData
+            }
+            background: Rectangle {
+                color: highlighted ? "#0078D7" : "#FFFFFF"
             }
             onHoveredChanged: {
                 combobox._highlightedIndex = hovered ? index : -1;
@@ -100,6 +103,28 @@ ComboBox {
         anchors.fill: parent
         onReleased: {
             parent.focus = true;
+        }
+    }
+
+    popup: Popup {
+        width: combobox.width
+        implicitHeight: contentItem.implicitHeight
+        padding: 1
+
+        background: Rectangle {
+            anchors.fill: parent
+            border.color: "black"
+            border.width: 1
+            color: "transparent"
+        }
+
+        contentItem: ListView {
+            id: listview
+            clip: true
+            implicitHeight: contentHeight
+            implicitWidth: contentWidth
+            model: filteredDelegateModel
+            delegate: filteredDelegateModel.delegate
         }
     }
 }

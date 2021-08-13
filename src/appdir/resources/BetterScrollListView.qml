@@ -1,8 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.3
 
-Flickable {
-    id: flickable
+ListView {
+    id: listview
     visible: true
     interactive: false
     flickableDirection: Flickable.HorizontalAndVerticalFlick
@@ -11,11 +11,11 @@ Flickable {
     function scroll(x, y) {
         parent.ScrollBar.vertical.active = true;
         parent.ScrollBar.horizontal.active = true;
-        flickable.contentX -= x;
-        flickable.contentY -= y;
-        flickable.returnToBounds();
-        flickable.contentX -= flickable.horizontalOvershoot;
-        flickable.contentY -= flickable.verticalOvershoot;
+        listview.contentX -= x;
+        listview.contentY -= y;
+        listview.returnToBounds();
+        listview.contentX -= listview.horizontalOvershoot;
+        listview.contentY -= listview.verticalOvershoot;
         parent.ScrollBar.vertical.active = false;
         parent.ScrollBar.horizontal.active = false;
     }
@@ -27,13 +27,13 @@ Flickable {
     }
 
     WheelHandler {
-        target: flickable.parent
+        target: listview.parent
         onWheel: {
             var delta = event.hasPixelDelta ? event.pixelDelta : event.angleDelta;
             if (event.modifiers & Qt.ShiftModifier) {
-                flickable.scroll(delta.y*sensitivity);
+                listview.scroll(delta.y*sensitivity);
             } else {
-                flickable.scroll(delta.x*sensitivity, delta.y*sensitivity);
+                listview.scroll(delta.x*sensitivity, delta.y*sensitivity);
             }
         }
     }
