@@ -73,6 +73,8 @@ def convert(inPath, iteration, total):
         signalHandler.logEvent.emit(theme.INFOTEXT, "File {0}/{1}, converting file {2}{3} from {3} to {4}. Full path of original: {5}".format(iteration+1, total, inName, inExt, targetExt, inPath))
         process = QProcess()
         magickPath = appdir + "/magick"
+        if platform.system() == "Windows":
+            magickPath = appdir + "/imagemagick/magick"
         if platform.system() == "Darwin":
             # assumes imagemagick is installed with homebrew on macOS
             os.environ["PATH"] = "/usr/local/bin:" + os.environ["PATH"]
