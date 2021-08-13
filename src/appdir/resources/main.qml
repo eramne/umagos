@@ -230,6 +230,7 @@ Item {
         objectName: "outputFormatBox"
         x: 436
         y: 35
+        separatorIndex: 12
 
         Component.onCompleted: {
             updateList(backend.getSupportedFormats().images);

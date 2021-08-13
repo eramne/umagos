@@ -15,8 +15,9 @@ from PySide2.QtGui import QGuiApplication
 
 paths = []
 supportedFormats = {
-    "images": [".png", ".jpeg", ".jpg", ".heic", ".heif", ".gif",
-               ".bmp", ".psd", ".tiff", ".hdr", ".exr", ".webp"]
+    "images": [".png", ".jpeg", ".jpg", ".gif", ".webp", ".bmp",
+               ".heic", ".heif", ".raw", ".psd", ".tiff", ".hdr",
+               ".png"]
 }
 
 

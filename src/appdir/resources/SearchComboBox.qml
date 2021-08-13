@@ -7,6 +7,7 @@ ComboBox {
     property int _highlightedIndex: -1
     id: combobox
     property alias filteredDelegateModel: filteredDelegateModel
+    property int separatorIndex: -1
 
     function updateList(fileTypes) {
         model.clear();
@@ -19,16 +20,18 @@ ComboBox {
     }
 
     function updateFilteredList(fileTypes) {
+        var tmpAddedFormatList = []; //for checking for duplicates
         filteredListModel.clear();
         fileTypes.forEach( function (item) {
             let text = contentItem.text;
             if (contentItem.selectionEnd === contentItem.text.length) {
                 text = text.substring(0, contentItem.selectionStart);
             }
-            if (text === currentText || item.startsWith(text)) {
+            if (text === currentText || (item.startsWith(text) && !tmpAddedFormatList.includes(item))) {
                 filteredListModel.append({
                     'text': item
                 });
+                tmpAddedFormatList.push(item);
             }
         });
     }
@@ -63,6 +66,15 @@ ComboBox {
                 text: modelData
             }
             background: Rectangle {
+                Rectangle {
+                    anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width * 2/3
+                    height: 2
+                    color: "#000000"
+                    opacity: index === separatorIndex ? 0.5 : 0
+                }
+
                 color: highlighted ? "#0078D7" : "#FFFFFF"
             }
             onHoveredChanged: {
