@@ -6,6 +6,7 @@ ListView {
     visible: true
     interactive: false
     flickableDirection: Flickable.HorizontalAndVerticalFlick
+    property alias _wheelhandler: wheelhandler
     property real sensitivity: 1/3
 
     function scroll(x, y) {
@@ -25,15 +26,19 @@ ListView {
         parent.ScrollBar.horizontal.position = 0;
         scroll(0, 0);
     }
+    Item {
+        anchors.fill: parent
+        WheelHandler {
+            id: wheelhandler
+            target: listview.parent
 
-    WheelHandler {
-        target: listview.parent
-        onWheel: {
-            var delta = event.hasPixelDelta ? event.pixelDelta : event.angleDelta;
-            if (event.modifiers & Qt.ShiftModifier) {
-                listview.scroll(delta.y*sensitivity);
-            } else {
-                listview.scroll(delta.x*sensitivity, delta.y*sensitivity);
+            onWheel: {
+                var delta = event.hasPixelDelta ? event.pixelDelta : event.angleDelta;
+                if (event.modifiers & Qt.ShiftModifier) {
+                    listview.scroll(delta.y*sensitivity);
+                } else {
+                    listview.scroll(delta.x*sensitivity, delta.y*sensitivity);
+                }
             }
         }
     }
