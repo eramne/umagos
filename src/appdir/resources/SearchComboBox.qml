@@ -94,7 +94,7 @@ ComboBox {
 
     onActiveFocusChanged: {
         if (!activeFocus) {
-            editText = currentText;
+            onAccepted();
         } else {
             contentItem.readOnly = false;
             popup.open();
@@ -104,6 +104,8 @@ ComboBox {
     onAccepted: {
         if (find(editText) === -1) {
             editText = currentText;
+        } else {
+            currentIndex = find(editText);
         }
         focus = false;
     }
