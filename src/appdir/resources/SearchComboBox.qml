@@ -23,13 +23,15 @@ ComboBox {
     function updateFilteredList(fileTypes) {
         var tmpAddedFormatList = []; //for checking for duplicates
         filteredListModel.clear();
+        listview.contentItem.children.length = 0;
+        combobox._highlightedIndex = -1;
         fileTypes.forEach( function (item) {
             let text = contentItem.text;
             if (contentItem.selectionEnd === contentItem.text.length) {
                 text = text.substring(0, contentItem.selectionStart);
             }
             combobox.searching = text !== currentText;
-            if (text === currentText || (item.startsWith(text) && !tmpAddedFormatList.includes(item))) {
+            if (!combobox.searching || (item.startsWith(text) && !tmpAddedFormatList.includes(item))) {
                 filteredListModel.append({
                     'text': item
                 });
@@ -126,7 +128,6 @@ ComboBox {
 
     popup: Popup {
         width: combobox.width
-        implicitHeight: contentItem.implicitHeight
         padding: 1
 
         background: Rectangle {
@@ -136,13 +137,19 @@ ComboBox {
             color: "white"
         }
 
-        contentItem: ListView {
-            id: listview
-            clip: true
-            implicitHeight: contentHeight
-            implicitWidth: contentWidth
-            model: filteredDelegateModel
-            delegate: filteredDelegateModel.delegate
+        contentItem: ScrollView {
+            onContentHeightChanged: {
+                parent.height = contentHeight;
+            }
+
+            BetterScrollListView {
+                id: listview
+                property int test: 0
+                clip: true
+                model: combobox.filteredDelegateModel
+                currentIndex: combobox.highlightedIndex
+                delegate: combobox.filteredDelegateModel.delegate
+            }
         }
     }
 }

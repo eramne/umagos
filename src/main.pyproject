@@ -1,3 +1,3 @@
 {
-    "files": ["theme.py","appdir/resources/BetterScrollFlickable.qml","conversionthread.py","main.py","appdir/resources/main.qml","appdir/resources/BetterScrollListView.qml","appdir/resources/SearchComboBox.qml","appdir/resources/BetterScrollSearchComboBox.qml"]
+    "files": ["appdir/resources/BetterScrollFlickable.qml","appdir/resources/BetterScrollListView.qml","theme.py","conversionthread.py","main.py","appdir/resources/main.qml","appdir/resources/SearchComboBox.qml"]
 }

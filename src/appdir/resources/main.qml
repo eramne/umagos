@@ -225,7 +225,7 @@ Item {
         font.pixelSize: 12
     }
 
-    BetterScrollSearchComboBox {
+    SearchComboBox {
         id: outputFormatBox
         objectName: "outputFormatBox"
         x: 436
