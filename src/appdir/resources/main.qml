@@ -10,6 +10,11 @@ Item {
     height: 480
     visible: true
 
+    Shortcut {
+        sequence: StandardKey.Paste
+        onActivated: openFromClipboardButton.onClicked()
+    }
+
     function setFileControlsEnabled(value) {
         convertButton.text = value ? "Convert" : "Cancel";
         inputFileViewDropArea.setAcceptDrop(value);
