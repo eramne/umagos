@@ -6,7 +6,6 @@ ListView {
     visible: true
     interactive: false
     flickableDirection: Flickable.HorizontalAndVerticalFlick
-    property alias _wheelhandler: wheelhandler
     property real sensitivity: 1/3
 
     function scroll(x, y) {
@@ -29,7 +28,6 @@ ListView {
     Item {
         anchors.fill: parent
         WheelHandler {
-            id: wheelhandler
             target: listview.parent
 
             onWheel: {

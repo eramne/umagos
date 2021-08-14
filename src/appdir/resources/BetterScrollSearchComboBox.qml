@@ -17,22 +17,6 @@ SearchComboBox {
             color: "white"
         }
 
-        Rectangle {
-            x: listview._wheelhandler.parent.x
-            y: listview._wheelhandler.parent.y
-            width: listview._wheelhandler.parent.width
-            height: listview._wheelhandler.parent.height
-            color: "#5500ff00"
-        }
-
-        Rectangle {
-            anchors.fill: parent.contentItem
-            border.color: "red"
-            border.width: 1
-            color: "#88ff0000"
-            z: 9999
-        }
-
         contentItem: ScrollView {
             onContentHeightChanged: {
                 parent.height = contentHeight;
