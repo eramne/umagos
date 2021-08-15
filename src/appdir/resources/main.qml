@@ -50,7 +50,7 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.WordWrap
-                opacity: inputFileView.text.length > 0 ? 0 : 1
+                opacity: inputFileView.model.count > 0 ? 0 : 1
                 width: parent.width * 2/3
             }
 
@@ -71,7 +71,45 @@ Item {
             }
         }
 
-        contentItem: BetterScrollFlickable {
+        BetterScrollListView {
+            id: inputFileView
+            objectName: "inputFileView"
+            anchors.fill: parent
+            implicitWidth: contentItem.childrenRect.width
+            margin: 5
+
+            function updateList(paths) {
+                inputFileView.model.clear();
+                paths.forEach( function (item) {
+                    inputFileView.model.append({"name":item});
+                });
+
+                //because i can't get the content width correctly for some reason without this
+                var max = 0;
+                for(var i = 0; i < inputFileView.count; i++) {
+                    inputFileView.currentIndex = i
+                    var itemWidth = inputFileView.currentItem.childrenRect.width
+                    max = Math.max(max, itemWidth)
+                }
+                inputFileView.contentWidth = max;
+
+                inputFileView.scrollToBottom();
+            }
+
+            model: ListModel {}
+            delegate: Item {
+                height: 20
+                Row {
+                    Text {
+                        text: name
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pixelSize: 12
+                    }
+                }
+            }
+        }
+
+        /*BetterScrollFlickable {
             id: inputFileViewFlickable
             flickableDirection: Flickable.HorizontalAndVerticalFlick
             anchors.fill: parent
@@ -95,7 +133,7 @@ Item {
                     inputFileViewFlickable.scrollToBottom();
                 }
             }
-        }
+        }*/
     }
 
     ScrollView {
@@ -120,7 +158,7 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.WordWrap
-                opacity: outputFileView.text.length > 0 ? 0 : 1
+                opacity: outputFileView.model.count > 0 ? 0 : 1
                 width: parent.width * 2/3
             }
 
@@ -148,7 +186,46 @@ Item {
             }
         }
 
-        BetterScrollFlickable {
+        BetterScrollListView {
+            id: outputFileView
+            objectName: "outputFileView"
+            anchors.fill: parent
+            implicitWidth: contentItem.childrenRect.width
+            margin: 5
+
+            function updateList(paths) {
+                outputFileScrollView.outputFiles = paths;
+                outputFileView.model.clear();
+                paths.forEach( function (item) {
+                    outputFileView.model.append({"name":item});
+                });
+
+                //because i can't get the content width correctly for some reason without this
+                var max = 0;
+                for(var i = 0; i < outputFileView.count; i++) {
+                    outputFileView.currentIndex = i
+                    var itemWidth = outputFileView.currentItem.childrenRect.width
+                    max = Math.max(max, itemWidth)
+                }
+                outputFileView.contentWidth = max;
+
+                outputFileView.scrollToBottom();
+            }
+
+            model: ListModel {}
+            delegate: Item {
+                height: 20
+                Row {
+                    Text {
+                        text: name
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pixelSize: 12
+                    }
+                }
+            }
+        }
+
+        /*BetterScrollFlickable {
             id: outputFileViewFlickable
             flickableDirection: Flickable.HorizontalAndVerticalFlick
             contentWidth: outputFileView.implicitWidth
@@ -173,7 +250,7 @@ Item {
                     outputFileViewFlickable.scrollToBottom();
                 }
             }
-        }
+        }*/
     }
 
     Button {

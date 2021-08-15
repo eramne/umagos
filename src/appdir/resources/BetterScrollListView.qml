@@ -6,6 +6,11 @@ ListView {
     visible: true
     interactive: false
     flickableDirection: Flickable.HorizontalAndVerticalFlick
+    property int margin: 5
+    topMargin: margin
+    leftMargin: margin
+    rightMargin: margin
+    bottomMargin: margin
     property real sensitivity: 1/3
 
     function scroll(x, y) {
