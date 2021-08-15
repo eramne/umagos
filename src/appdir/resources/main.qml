@@ -37,15 +37,16 @@ Item {
         width: 188
         height: 184
         clip: true
+        padding: 5
         background: Rectangle {
             anchors.fill: parent
             border.color: "black"
             border.width: 1
             color: "transparent"
+            z: 1
 
             Text {
                 anchors.centerIn: parent
-                z: 1
                 text: qsTr("Drag files to convert here")
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -76,7 +77,6 @@ Item {
             objectName: "inputFileView"
             anchors.fill: parent
             implicitWidth: contentItem.childrenRect.width
-            margin: 5
 
             function updateList(paths) {
                 inputFileView.model.clear();
@@ -84,11 +84,10 @@ Item {
                     inputFileView.model.append({"name":item});
                 });
 
-                //because i can't get the content width correctly for some reason without this
                 var max = 0;
                 for(var i = 0; i < inputFileView.count; i++) {
                     inputFileView.currentIndex = i
-                    var itemWidth = inputFileView.currentItem.childrenRect.width
+                    var itemWidth = inputFileView.currentItem.contentItem.childrenRect.width
                     max = Math.max(max, itemWidth)
                 }
                 inputFileView.contentWidth = max;
@@ -96,44 +95,35 @@ Item {
                 inputFileView.scrollToBottom();
             }
 
-            model: ListModel {}
+            model: ListModel {
+                id: inputFileModel
+                property var selectedIndices: [0, 2, 3, 6]
+                property int lastSelectedIndex: -1
+            }
             delegate: Item {
-                height: 20
-                Row {
-                    Text {
-                        text: name
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.pixelSize: 12
+                id: rowItem
+                height: contentItem.childrenRect.height
+                property alias contentItem: contentItem
+                property bool selected: inputFileModel.selectedIndices.includes(index)
+                Rectangle {
+                    id: highlight
+                    color: "#aaaaff"
+                    height: rowItem.height
+                    width: selected ? Math.max(inputFileView.width, inputFileView.contentWidth) : 0
+                }
+                Item {
+                    id: contentItem
+                    Row {
+                        padding: 5
+                        Text {
+                            text: name
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pixelSize: 12
+                        }
                     }
                 }
             }
         }
-
-        /*BetterScrollFlickable {
-            id: inputFileViewFlickable
-            flickableDirection: Flickable.HorizontalAndVerticalFlick
-            anchors.fill: parent
-            contentWidth: inputFileView.implicitWidth
-            contentHeight: inputFileView.implicitHeight
-
-            Text {
-                id: inputFileView
-                objectName: "inputFileView"
-                text: ""
-                anchors.fill: parent
-                font.pixelSize: 12
-                padding: 5
-
-                function updateList(paths) {
-                    inputFileView.text = "";
-                    paths.forEach( function (item) {
-                        inputFileView.text += item + "\r\n";
-                    });
-                    inputFileView.text = inputFileView.text.trim();
-                    inputFileViewFlickable.scrollToBottom();
-                }
-            }
-        }*/
     }
 
     ScrollView {
@@ -191,7 +181,6 @@ Item {
             objectName: "outputFileView"
             anchors.fill: parent
             implicitWidth: contentItem.childrenRect.width
-            margin: 5
 
             function updateList(paths) {
                 outputFileScrollView.outputFiles = paths;
@@ -224,33 +213,6 @@ Item {
                 }
             }
         }
-
-        /*BetterScrollFlickable {
-            id: outputFileViewFlickable
-            flickableDirection: Flickable.HorizontalAndVerticalFlick
-            contentWidth: outputFileView.implicitWidth
-            contentHeight: outputFileView.implicitHeight
-            anchors.fill: parent
-
-            Text {
-                id: outputFileView
-                objectName: "outputFileView"
-                text: ""
-                anchors.fill: parent
-                font.pixelSize: 12
-                padding: 5
-
-                function updateList(paths) {
-                    outputFileScrollView.outputFiles = paths;
-                    outputFileView.text = "";
-                    paths.forEach( function (item) {
-                        outputFileView.text += item + "\r\n"
-                    });
-                    outputFileView.text = outputFileView.text.trim();
-                    outputFileViewFlickable.scrollToBottom();
-                }
-            }
-        }*/
     }
 
     Button {
