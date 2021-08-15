@@ -70,18 +70,21 @@ def convert(inPath, iteration, total):
     outFile = getUsableName("{0}/{1}{2}".format(outPath, inName, targetExt), inPath)
     arguments = ["convert", inPath, outFile]
     try:
-        signalHandler.logEvent.emit(theme.INFOTEXT, "File {0}/{1}, converting file {2}{3} from {3} to {4}. Full path of original: {5}".format(iteration+1, total, inName, inExt, targetExt, inPath))
-        process = QProcess()
-        magickPath = appdir + "/magick"
-        if platform.system() == "Windows":
-            magickPath = appdir + "/imagemagick/magick"
-        if platform.system() == "Darwin":
-            # assumes imagemagick is installed with homebrew on macOS
-            os.environ["PATH"] = "/usr/local/bin:" + os.environ["PATH"]
-            magickPath = shutil.which("magick")
-        process.start(magickPath, arguments)
-        process.waitForStarted(-1)
-        process.waitForFinished(-1)
+        if os.path.exists(inPath):
+            signalHandler.logEvent.emit(theme.INFOTEXT, "File {0}/{1}, converting file {2}{3} from {3} to {4}. Full path of original: {5}".format(iteration+1, total, inName, inExt, targetExt, inPath))
+            process = QProcess()
+            magickPath = appdir + "/magick"
+            if platform.system() == "Windows":
+                magickPath = appdir + "/imagemagick/magick"
+            if platform.system() == "Darwin":
+                # assumes imagemagick is installed with homebrew on macOS
+                os.environ["PATH"] = "/usr/local/bin:" + os.environ["PATH"]
+                magickPath = shutil.which("magick")
+            process.start(magickPath, arguments)
+            process.waitForStarted(-1)
+            process.waitForFinished(-1)
+        else:
+            signalHandler.logEvent.emit(theme.ERRORTEXT, "Error: File {0} has been renamed, moved, or deleted, and could not be found.".format(inPath))
     except Exception as e:
         print(e)
     signalHandler.outputFilesUpdateEvent.emit()
