@@ -37,12 +37,22 @@ Item {
         width: 188
         height: 184
         clip: true
-
         background: Rectangle {
             anchors.fill: parent
             border.color: "black"
             border.width: 1
             color: "transparent"
+
+            Text {
+                anchors.centerIn: parent
+                z: 1
+                text: qsTr("Drag files to convert here")
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WordWrap
+                opacity: inputFileView.text.length > 0 ? 0 : 1
+                width: parent.width * 2/3
+            }
 
             DropArea {
                 anchors.fill: parent
@@ -61,7 +71,7 @@ Item {
             }
         }
 
-        BetterScrollFlickable {
+        contentItem: BetterScrollFlickable {
             id: inputFileViewFlickable
             flickableDirection: Flickable.HorizontalAndVerticalFlick
             anchors.fill: parent
@@ -102,6 +112,17 @@ Item {
             border.color: "black"
             border.width: 1
             color: "transparent"
+
+            Text {
+                anchors.centerIn: parent
+                z: 1
+                text: qsTr("Drag converted files out from here")
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WordWrap
+                opacity: outputFileView.text.length > 0 ? 0 : 1
+                width: parent.width * 2/3
+            }
 
             Drag.active: dragArea.drag.active
             Drag.dragType: Drag.Automatic
