@@ -77,9 +77,12 @@ Item {
             objectName: "inputFileView"
             anchors.fill: parent
             implicitWidth: contentItem.childrenRect.width
+            property var selectedIndices: []
+            property int lastSelectedIndex: -1
 
             function updateList(paths) {
                 inputFileView.model.clear();
+                inputFileView.selectedIndices.length = 0;
                 paths.forEach( function (item) {
                     inputFileView.model.append({"name":item});
                 });
@@ -93,23 +96,66 @@ Item {
                 inputFileView.contentWidth = max;
 
                 inputFileView.scrollToBottom();
+                inputFileView.updateSelection();
+            }
+
+            function updateSelection() {
+                for (var i = 0; i < inputFileModel.count; i++) {
+                    inputFileModel.setProperty(i, "selected", inputFileView.selectedIndices.includes(i));
+                }
             }
 
             model: ListModel {
                 id: inputFileModel
-                property var selectedIndices: [0, 2, 3, 6]
-                property int lastSelectedIndex: -1
             }
             delegate: Item {
                 id: rowItem
                 height: contentItem.childrenRect.height
                 property alias contentItem: contentItem
-                property bool selected: inputFileModel.selectedIndices.includes(index)
+                property bool selected: inputFileView.selectedIndices.includes(index)
+
                 Rectangle {
                     id: highlight
                     color: "#aaaaff"
+                    opacity: selected ? 1 : 0
                     height: rowItem.height
-                    width: selected ? Math.max(inputFileView.width, inputFileView.contentWidth) : 0
+                    width: Math.max(inputFileView.width, inputFileView.contentWidth)
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        onClicked: {
+                            if (mouse.button == Qt.LeftButton) {
+                                if (!(mouse.modifiers & Qt.ControlModifier) && !(mouse.modifiers & Qt.ShiftModifier)) {
+                                    inputFileView.selectedIndices = [index];
+                                    inputFileView.lastSelectedIndex = index;
+                                }
+
+                                if (mouse.modifiers & Qt.ControlModifier) {
+                                    inputFileView.selectedIndices.push(index);
+                                    inputFileView.selectedIndices = [...new Set(inputFileView.selectedIndices)]; //remove duplicates
+                                }
+                                if (mouse.modifiers & Qt.ShiftModifier) {
+                                    if (!(mouse.modifiers & Qt.ControlModifier)) {
+                                        inputFileView.selectedIndices = [];
+                                    }
+                                    var min = Math.min(inputFileView.lastSelectedIndex, index);
+                                    var max = Math.max(inputFileView.lastSelectedIndex, index);
+                                    for (var i = min; i <= max; i++) {
+                                        inputFileView.selectedIndices.push(i);
+                                    }
+                                    inputFileView.selectedIndices = [...new Set(inputFileView.selectedIndices)]; //remove duplicates
+                                } else {
+                                    inputFileView.lastSelectedIndex = index;
+                                }
+                            } else if (mouse.button == Qt.RightButton) {
+                                if ((mouse.modifiers != Qt.ControlModifier) && !selected) {
+                                    inputFileView.selectedIndices = [index];
+                                }
+                                inputFileView.lastSelectedIndex = index;
+                            }
+                            inputFileView.updateSelection();
+                        }
+                    }
                 }
                 Item {
                     id: contentItem
@@ -121,6 +167,16 @@ Item {
                             font.pixelSize: 12
                         }
                     }
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                z: -1
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onClicked: {
+                    inputFileView.selectedIndices = [];
+                    inputFileView.updateSelection();
                 }
             }
         }
