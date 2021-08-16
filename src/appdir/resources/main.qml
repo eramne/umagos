@@ -76,7 +76,7 @@ Item {
             id: inputFileView
             objectName: "inputFileView"
             anchors.fill: parent
-            implicitWidth: contentItem.childrenRect.width
+            //implicitWidth: contentItem.childrenRect.width
 
             function updateList(paths) {
                 inputFileView.model.clear();
@@ -88,8 +88,7 @@ Item {
                 var max = 0;
                 for(var i = 0; i < inputFileView.count; i++) {
                     inputFileView.currentIndex = i
-                    //var itemWidth = inputFileView.currentItem.contentItem.childrenRect.width
-                    var itemWidth = inputFileView.currentItem.childrenRect.width
+                    var itemWidth = inputFileView.currentItem.contentItem.width;
                     max = Math.max(max, itemWidth);
                 }
                 inputFileView.contentWidth = max;
@@ -98,15 +97,14 @@ Item {
                 inputFileView.updateSelection();
             }
 
-            rowDelegate: Item {
-                height: childrenRect.height;
-                Row {
-                    padding: 5
-                    Text {
-                        text: itemData.name
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.pixelSize: 12
-                    }
+            rowDelegate: Row {
+                padding: 5
+                width: text.implicitWidth + padding*2
+                Text {
+                    id: text
+                    text: itemData.name
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 12
                 }
             }
         }

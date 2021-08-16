@@ -4,6 +4,11 @@ import QtQuick.Controls 2.3
 BetterScrollListView {
     id: listview
     property Component rowDelegate: Component { Item {} }
+    property Component highlightItem: Component {
+        Rectangle {
+            color: "#aaaaff"
+        }
+    }
     property var selectedIndices: []
     property int lastSelectedIndex: -1
 
@@ -20,16 +25,23 @@ BetterScrollListView {
         id: rowItem
         height: loader.item.height
         property bool selected: listview.selectedIndices.includes(index)
-        property alias loader: loader
+        property alias contentItem: loader.item
 
         Item {
             height: rowItem.height
             width: Math.max(listview.width, listview.contentWidth)
             opacity: selected ? 1 : 0
 
-            Rectangle {
+            Loader {
+                sourceComponent: listview.highlightItem
+                id: highlightLoader
                 anchors.fill: parent
-                color: "#aaaaff"
+                property var itemData: ({});
+                property int index: model.index
+
+                Component.onCompleted: {
+                    itemData = Object.assign({}, listmodel.get(index));
+                }
             }
 
             MouseArea {
