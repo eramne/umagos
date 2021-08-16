@@ -20,6 +20,7 @@ BetterScrollListView {
         id: rowItem
         height: loader.item.height
         property bool selected: listview.selectedIndices.includes(index)
+        property alias loader: loader
 
         Item {
             height: rowItem.height
@@ -72,21 +73,13 @@ BetterScrollListView {
         Loader {
             sourceComponent: listview.rowDelegate
             id: loader
-            property var itemData: Object.assign({}, listmodel.get(index));
+            property var itemData: ({});
             property int index: model.index
-        }
 
-        /*Item {
-            id: contentItem
-            Row {
-                padding: 5
-                Text {
-                    text: name
-                    anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 12
-                }
+            Component.onCompleted: {
+                itemData = Object.assign({}, listmodel.get(index));
             }
-        }*/
+        }
     }
 
     MouseArea {
