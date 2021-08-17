@@ -64,6 +64,15 @@ class Backend(QObject):
         paths.clear()
         self.updateInputFilesList()
 
+    @Slot(list)
+    def removeFromInputSelection(self, indices):
+        global paths
+        tmpPaths = []
+        for i, val in enumerate(paths):
+            if not i in indices:
+                tmpPaths.append(val)
+        paths = tmpPaths
+
     @Slot(result="QVariantMap")
     def getSupportedFormats(self):
         return supportedFormats

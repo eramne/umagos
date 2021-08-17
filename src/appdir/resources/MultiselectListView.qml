@@ -14,8 +14,8 @@ BetterScrollListView {
 
     function updateSelection() {
         for (var i = 0; i < listmodel.count; i++) {
-            var identifier = listmodel.get(i).identifier;
-            listmodel.setProperty(i, "selected", listview.selectedIds.includes(identifier));
+            var identifier = idOf(i);
+            listview.itemAt(i).selected = listview.selectedIds.includes(identifier);
         }
     }
 

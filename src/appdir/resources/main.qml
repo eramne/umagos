@@ -17,7 +17,6 @@ Item {
         outputFormatBox._setEnabled(value);
         outFormatLabel.opacity = value ? 1 : 0.5;
         openFileButton._setEnabled(value);
-        openFromClipboardButton._setEnabled(value);
     }
 
     Rectangle {
@@ -28,6 +27,13 @@ Item {
             anchors.fill: parent
             propagateComposedEvents: true
             onClicked: {
+                window.forceActiveFocus();
+            }
+        }
+
+        Shortcut {
+            sequence: StandardKey.Cancel
+            onActivated: {
                 window.forceActiveFocus();
             }
         }
@@ -52,7 +58,32 @@ Item {
             Shortcut {
                 enabled: inputFileView.activeFocus;
                 sequence: StandardKey.Paste
-                onActivated: openFromClipboardButton.onClicked()
+                onActivated: {
+                    backend.getClipboardUrls().forEach( function (url) {
+                        backend.addToPaths(url);
+                    });
+                }
+            }
+
+            Shortcut {
+                enabled: inputFileView.activeFocus;
+                sequences: [StandardKey.Delete, StandardKey.Backspace, "Backspace"]
+                onActivated: {
+                    backend.removeFromInputSelection(inputFileView.selectedIds);
+                    backend.updateInputFilesList();
+                }
+            }
+
+            Shortcut {
+                enabled: inputFileView.activeFocus;
+                sequence: StandardKey.SelectAll
+                onActivated: {
+                    inputFileView.selectedIds.length = 0;
+                    for (var i = 0; i < inputFileView.model.count; i++) {
+                        inputFileView.selectedIds.push(inputFileView.idOf(i));
+                    }
+                    inputFileView.updateSelection();
+                }
             }
 
             MouseArea {
@@ -120,9 +151,9 @@ Item {
 
             rowDelegate: Row {
                 padding: 5
-                width: text.implicitWidth + padding*2
+                width: text2.implicitWidth + padding*2
                 Text {
-                    id: text
+                    id: text2
                     text: itemData.name
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 12
@@ -276,24 +307,6 @@ Item {
     }
 
     Button {
-        id: openFromClipboardButton
-        x: 281
-        y: 302
-        width: 79
-        height: 25
-        text: qsTr("Paste files")
-        onClicked: {
-            backend.getClipboardUrls().forEach( function (url) {
-                backend.addToPaths(url);
-            });
-        }
-        function _setEnabled(value) {
-            opacity = value ? 1 : 0.5;
-            enabled = value;
-        }
-    }
-
-    Button {
         id: convertButton
         objectName: "btn_convert"
         x: 285
@@ -407,3 +420,9 @@ Item {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/
