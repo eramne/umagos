@@ -80,7 +80,7 @@ Item {
 
             function updateList(paths) {
                 inputFileView.model.clear();
-                inputFileView.selectedIndices.length = 0;
+                inputFileView.selectedIds.length = 0;
                 paths.forEach( function (item) {
                     inputFileView.model.append({"name":item});
                 });
@@ -151,7 +151,6 @@ Item {
                 propagateComposedEvents: true
                 onPressed: {
                     parent.Drag.imageSource = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D";
-                    signalHandler.onOutputFileUpdate()
                     var urls = "";
                     for (var i = 0; i < outputFileScrollView.outputFiles.length; i++) {
                         urls += backend.getOutputPathUrl() + "/" + outputFileScrollView.outputFiles[i] + "\r\n"
@@ -167,10 +166,14 @@ Item {
             anchors.fill: parent
 
             function updateList(paths) {
+                var highlightNewItem = outputFileView.model.count === 0 || outputFileView.getAllSelected();
                 outputFileScrollView.outputFiles = paths;
                 outputFileView.model.clear();
                 paths.forEach( function (item) {
-                    outputFileView.model.append({"name":item});
+                    outputFileView.model.append({"name":item,"id":item});
+                    if (highlightNewItem) {
+                        outputFileView.selectedIds.push(item);
+                    }
                 });
 
                 var max = 0;
@@ -183,6 +186,15 @@ Item {
 
                 outputFileView.scrollToBottom();
                 outputFileView.updateSelection();
+            }
+
+            function getAllSelected() {
+                for (var i = 0; i < outputFileView.model.count; i++) {
+                    if (!outputFileView.itemAt(i).selected) {
+                        return false;
+                    }
+                }
+                return true;
             }
 
             rowDelegate: Row {

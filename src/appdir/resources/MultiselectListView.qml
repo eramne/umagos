@@ -9,13 +9,33 @@ BetterScrollListView {
             color: "#aaaaff"
         }
     }
-    property var selectedIndices: []
+    property var selectedIds: []
     property int lastSelectedIndex: -1
 
     function updateSelection() {
         for (var i = 0; i < listmodel.count; i++) {
-            listmodel.setProperty(i, "selected", listview.selectedIndices.includes(i));
+            var identifier = listmodel.get(i).identifier;
+            listmodel.setProperty(i, "selected", listview.selectedIds.includes(identifier));
         }
+    }
+
+    function indexOf(_id) {
+        for (var i = 0; i < listmodel.count; i++) {
+            if (listview.idOf(i) === _id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    function idOf(_index) {
+        listview.currentIndex = _index;
+        return listview.currentItem.identifier;
+    }
+
+    function itemAt(_index) {
+        listview.currentIndex = _index;
+        return listview.currentItem;
     }
 
     model: ListModel {
@@ -23,8 +43,9 @@ BetterScrollListView {
     }
     delegate: Item {
         id: rowItem
+        property var identifier: typeof model.id === 'undefined' ? index : model.id
         height: loader.item.height
-        property bool selected: listview.selectedIndices.includes(index)
+        property bool selected: listview.selectedIds.includes(identifier)
         property alias contentItem: loader.item
 
         Item {
@@ -50,40 +71,40 @@ BetterScrollListView {
                 onClicked: {
                     if (mouse.button == Qt.LeftButton) {
                         if (!(mouse.modifiers & Qt.ControlModifier) && !(mouse.modifiers & Qt.ShiftModifier)) {
-                            listview.selectedIndices = [index];
+                            listview.selectedIds = [identifier];
                             listview.lastSelectedIndex = index;
                         }
 
                         if (mouse.modifiers & Qt.ControlModifier) {
                             if (!rowItem.selected) {
-                                listview.selectedIndices.push(index);
+                                listview.selectedIds.push(identifier);
                             } else {
-                                const indexToRemove = listview.selectedIndices.indexOf(index);
+                                const indexToRemove = listview.selectedIds.indexOf(identifier);
                                 if (indexToRemove > -1) {
-                                    listview.selectedIndices.splice(indexToRemove, 1);
+                                    listview.selectedIds.splice(indexToRemove, 1);
                                 }
                             }
                         }
                         if (mouse.modifiers & Qt.ShiftModifier) {
                             if (!(mouse.modifiers & Qt.ControlModifier)) {
-                                listview.selectedIndices = [];
+                                listview.selectedIds = [];
                             }
                             var min = Math.min(listview.lastSelectedIndex, index);
                             var max = Math.max(listview.lastSelectedIndex, index);
                             for (var i = min; i <= max; i++) {
-                                listview.selectedIndices.push(i);
+                                listview.selectedIds.push(listview.idOf(i));
                             }
                         } else {
                             listview.lastSelectedIndex = index;
                         }
                     } else if (mouse.button == Qt.RightButton) {
                         if ((mouse.modifiers != Qt.ControlModifier) && !selected) {
-                            listview.selectedIndices = [index];
+                            listview.selectedIds = [identifier];
                         }
                         listview.lastSelectedIndex = index;
                     }
+                    listview.selectedIds = [...new Set(listview.selectedIds)];
                     listview.updateSelection();
-                    listview.selectedIndices = [...new Set(listview.selectedIndices)];
                 }
             }
         }
