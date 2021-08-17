@@ -58,7 +58,8 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 propagateComposedEvents: true
-                onClicked: {
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onPressed: {
                     inputFileView.forceActiveFocus();
                     mouse.accepted = false;
                 }
@@ -82,6 +83,7 @@ Item {
                     drop.urls.forEach( function (url) {
                         backend.addToPaths(url);
                     });
+                    inputFileView.forceActiveFocus();
                 }
 
                 function setAcceptDrop(value) {
@@ -175,8 +177,15 @@ Item {
                         urls += backend.getOutputPathUrl() + "/" + outputFileScrollView.outputFiles[i] + "\r\n"
                     }
                     parent.Drag.mimeData = {"text/uri-list": urls};
+                    outputFileView.forceActiveFocus();
                 }
-                onClicked: {
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                propagateComposedEvents: true
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onPressed: {
                     outputFileView.forceActiveFocus();
                     mouse.accepted = false;
                 }

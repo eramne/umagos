@@ -6,7 +6,7 @@ BetterScrollListView {
     property Component rowDelegate: Component { Item {} }
     property Component highlightItem: Component {
         Rectangle {
-            color: "#aaaaff"
+            color: listview.activeFocus ? "#aaaaff" : "#cccccc"
         }
     }
     property var selectedIds: []
