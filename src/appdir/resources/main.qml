@@ -217,6 +217,7 @@ Item {
             z: 1
 
             Shortcut {
+                id: outputSelectAllShortcut
                 enabled: outputFileView.activeFocus;
                 sequence: StandardKey.SelectAll
                 onActivated: {
@@ -229,10 +230,44 @@ Item {
             }
 
             Shortcut {
+                id: outputCopyShortcut
                 enabled: outputFileView.activeFocus;
                 sequence: StandardKey.Copy
                 onActivated: {
                     backend.setClipboardUrls(outputFileView.getSelectionUrls());
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                propagateComposedEvents: true
+                acceptedButtons: Qt.RightButton
+                onClicked: {
+                    outputContextMenu.popup();
+                    mouse.accepted = false;
+                }
+
+                Menu {
+                    id: outputContextMenu
+                    width: 250
+                    MenuItem {
+                        text: `Copy selected files (${outputCopyShortcut.nativeText})`
+                        onTriggered: outputCopyShortcut.activated()
+                        opacity: enabled ? 1 : 0.5
+                        enabled: outputFileView.selectedIds.length > 0
+                    }
+                    MenuItem {
+                        text: `Copy all files`
+                        onTriggered: backend.setClipboardUrls(outputFileView.getAllUrls());
+                        opacity: enabled ? 1 : 0.5
+                        enabled: outputFileView.model.count > 0
+                    }
+                    MenuItem {
+                        text: `Select All (${outputSelectAllShortcut.nativeText})`
+                        onTriggered: outputSelectAllShortcut.activated()
+                        opacity: enabled ? 1 : 0.5
+                        enabled: outputFileView.model.count > 0
+                    }
                 }
             }
 
@@ -357,6 +392,14 @@ Item {
                     if (outputFileView.selectedIds.includes(outputFileView.outputFiles[i])) {
                         urls += backend.getOutputPathUrl() + "/" + outputFileView.outputFiles[i] + "\r\n";
                     }
+                }
+                return urls;
+            }
+
+            function getAllUrls() {
+                var urls = "";
+                for (var i = 0; i < outputFileView.outputFiles.length; i++) {
+                    urls += backend.getOutputPathUrl() + "/" + outputFileView.outputFiles[i] + "\r\n";
                 }
                 return urls;
             }
