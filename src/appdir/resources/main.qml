@@ -54,7 +54,18 @@ Item {
             color: "transparent"
             z: 1
 
+            MouseArea {
+                anchors.fill: parent
+                propagateComposedEvents: true
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onPressed: {
+                    inputFileView.forceActiveFocus();
+                    mouse.accepted = false;
+                }
+            }
+
             Shortcut {
+                id: inputPasteShortcut
                 enabled: inputFileView.activeFocus;
                 sequence: StandardKey.Paste
                 onActivated: {
@@ -65,6 +76,7 @@ Item {
             }
 
             Shortcut {
+                id: inputRemoveShortcut
                 enabled: inputFileView.activeFocus;
                 sequences: [StandardKey.Delete, StandardKey.Backspace, "Backspace"]
                 onActivated: {
@@ -74,6 +86,7 @@ Item {
             }
 
             Shortcut {
+                id: inputSelectAllShortcut
                 enabled: inputFileView.activeFocus;
                 sequence: StandardKey.SelectAll
                 onActivated: {
@@ -88,10 +101,37 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 propagateComposedEvents: true
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                onPressed: {
-                    inputFileView.forceActiveFocus();
+                acceptedButtons: Qt.RightButton
+                onClicked: {
+                    inputContextMenu.popup();
                     mouse.accepted = false;
+                }
+
+                Menu {
+                    id: inputContextMenu
+                    width: 250
+                    MenuItem {
+                        id: inputPasteMenuItem
+                        text: `Paste files (${inputPasteShortcut.nativeText})`
+                        onTriggered: inputPasteShortcut.activated()
+                        opacity: enabled ? 1 : 0.5
+                    }
+                    MenuItem {
+                        text: `Remove selected files (Backspace)`
+                        onTriggered: inputRemoveShortcut.activated()
+                        opacity: enabled ? 1 : 0.5
+                        enabled: inputFileView.selectedIds.length > 0
+                    }
+                    MenuItem {
+                        text: `Select All (${inputSelectAllShortcut.nativeText})`
+                        onTriggered: inputSelectAllShortcut.activated()
+                        opacity: enabled ? 1 : 0.5
+                        enabled: inputFileView.model.count > 0
+                    }
+
+                    onOpened: {
+                        inputPasteMenuItem.enabled = backend.getClipboardUrls().length > 0;
+                    }
                 }
             }
 
