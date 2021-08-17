@@ -13,7 +13,6 @@ Item {
     function setFileControlsEnabled(value) {
         convertButton.text = value ? "Convert" : "Cancel";
         inputFileViewDropArea.setAcceptDrop(value);
-        clearInputSelectionButton._setEnabled(value);
         outputFormatBox._setEnabled(value);
         outFormatLabel.opacity = value ? 1 : 0.5;
         openFileButton._setEnabled(value);
@@ -163,14 +162,12 @@ Item {
     }
 
     ScrollView {
-        id: outputFileScrollView
         x: 390
         y: 112
         width: 188
         height: 184
         clip: true
         padding: 5
-        property var outputFiles: []
 
         background: Rectangle {
             anchors.fill: parent
@@ -188,6 +185,14 @@ Item {
                         outputFileView.selectedIds.push(outputFileView.idOf(i));
                     }
                     outputFileView.updateSelection();
+                }
+            }
+
+            Shortcut {
+                enabled: outputFileView.activeFocus;
+                sequence: StandardKey.Copy
+                onActivated: {
+                    backend.setClipboardUrls(outputFileView.getSelectionUrls());
                 }
             }
 
@@ -215,15 +220,10 @@ Item {
                 propagateComposedEvents: true
                 onPressed: dragImage.grabToImage(function(result) {
                     parent.Drag.imageSource = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D";
-                    var urls = "";
-                    for (var i = 0; i < outputFileScrollView.outputFiles.length; i++) {
-                        if (outputFileView.selectedIds.includes(outputFileScrollView.outputFiles[i])) {
-                            urls += backend.getOutputPathUrl() + "/" + outputFileScrollView.outputFiles[i] + "\r\n";
-                        }
-                    }
+                    var urls = outputFileView.getSelectionUrls();
                     parent.Drag.mimeData = {"text/uri-list": urls};
 
-                    if (urls.length > 0) {
+                    if (outputFileView.selectedIds.length > 0) {
                         parent.Drag.imageSource = result.url;
                     } else {
                         parent.Drag.cancel();
@@ -276,12 +276,12 @@ Item {
             id: outputFileView
             objectName: "outputFileView"
             anchors.fill: parent
+            property var outputFiles: []
 
             function updateList(paths) {
                 var highlightNewItem = outputFileView.model.count === 0 || outputFileView.getAllSelected();
-                outputFileScrollView.outputFiles = paths;
+                outputFileView.outputFiles = paths;
                 outputFileView.model.clear();
-                outputFileView.selectedIds.length = 0;
 
                 paths.forEach( function (item) {
                     outputFileView.model.append({"name":item,"id":item});
@@ -311,6 +311,16 @@ Item {
                 return true;
             }
 
+            function getSelectionUrls() {
+                var urls = "";
+                for (var i = 0; i < outputFileView.outputFiles.length; i++) {
+                    if (outputFileView.selectedIds.includes(outputFileView.outputFiles[i])) {
+                        urls += backend.getOutputPathUrl() + "/" + outputFileView.outputFiles[i] + "\r\n";
+                    }
+                }
+                return urls;
+            }
+
             rowDelegate: Row {
                 padding: 5
                 width: text1.implicitWidth + padding*2
@@ -325,25 +335,8 @@ Item {
     }
 
     Button {
-        id: clearInputSelectionButton
-        objectName: "btn_clearInputSelection"
-        x: 90
-        y: 302
-        width: 100
-        height: 25
-        text: qsTr("Clear selection")
-        onClicked: {
-            backend.clearInputSelection()
-        }
-        function _setEnabled(value) {
-            opacity = value ? 1 : 0.5;
-            enabled = value;
-        }
-    }
-
-    Button {
         id: openFileButton
-        x: 196
+        x: 90
         y: 302
         width: 79
         height: 25

@@ -8,7 +8,7 @@ import sys
 import conversionthread
 from theme import theme
 
-from PySide2.QtCore import QObject, QUrl, Slot, Signal, QDir
+from PySide2.QtCore import QObject, QUrl, Slot, Signal, QDir, QMimeData
 from PySide2.QtQuick import QQuickView
 from PySide2.QtQuickControls2 import QQuickStyle
 from PySide2.QtGui import QGuiApplication
@@ -91,6 +91,13 @@ class Backend(QObject):
     def getClipboardUrls(self):
         clipboard = QGuiApplication.clipboard()
         return clipboard.mimeData().urls()
+
+    @Slot(str)
+    def setClipboardUrls(self, urls):
+        clipboard = QGuiApplication.clipboard()
+        mimeData = QMimeData()
+        mimeData.setUrls(urls.split("\r\n"))
+        clipboard.setMimeData(mimeData)
 
 
 class CustomSignalHandler(QObject):
