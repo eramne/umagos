@@ -12,11 +12,15 @@ BetterScrollListView {
     property var selectedIds: []
     property int lastSelectedIndex: -1
 
+    signal selectionUpdated()
+
     function updateSelection() {
         for (var i = 0; i < listmodel.count; i++) {
             var identifier = idOf(i);
             listview.itemAt(i).selected = listview.selectedIds.includes(identifier);
         }
+        listview.selectedIds = [...new Set(listview.selectedIds)];
+        listview.selectionUpdated();
     }
 
     function indexOf(_id) {
@@ -104,7 +108,6 @@ BetterScrollListView {
                         }
                         listview.lastSelectedIndex = index;
                     }
-                    listview.selectedIds = [...new Set(listview.selectedIds)];
                     listview.updateSelection();
                 }
             }

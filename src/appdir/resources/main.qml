@@ -179,6 +179,18 @@ Item {
             color: "transparent"
             z: 1
 
+            Shortcut {
+                enabled: outputFileView.activeFocus;
+                sequence: StandardKey.SelectAll
+                onActivated: {
+                    outputFileView.selectedIds.length = 0;
+                    for (var i = 0; i < outputFileView.model.count; i++) {
+                        outputFileView.selectedIds.push(outputFileView.idOf(i));
+                    }
+                    outputFileView.updateSelection();
+                }
+            }
+
             Text {
                 anchors.centerIn: parent
                 text: qsTr("Drag converted files out from here")
@@ -193,7 +205,7 @@ Item {
             Drag.dragType: Drag.Automatic
             Drag.supportedActions: Qt.CopyAction
             Drag.mimeData: {
-                "text/plain": "Copied text"
+                "text/plain": ""
             }
 
             MouseArea {
@@ -201,14 +213,51 @@ Item {
                 anchors.fill: parent
                 drag.target: parent
                 propagateComposedEvents: true
-                onPressed: {
+                onPressed: dragImage.grabToImage(function(result) {
                     parent.Drag.imageSource = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D";
                     var urls = "";
                     for (var i = 0; i < outputFileScrollView.outputFiles.length; i++) {
-                        urls += backend.getOutputPathUrl() + "/" + outputFileScrollView.outputFiles[i] + "\r\n"
+                        if (outputFileView.selectedIds.includes(outputFileScrollView.outputFiles[i])) {
+                            urls += backend.getOutputPathUrl() + "/" + outputFileScrollView.outputFiles[i] + "\r\n";
+                        }
                     }
                     parent.Drag.mimeData = {"text/uri-list": urls};
+
+                    if (urls.length > 0) {
+                        parent.Drag.imageSource = result.url;
+                    } else {
+                        parent.Drag.cancel();
+                    }
+
                     outputFileView.forceActiveFocus();
+                })
+                Item {
+                    id: dragImage
+                    visible: false
+                    property int displacement: 20
+                    width: dragImageRect.width + displacement
+                    height: dragImageRect.height
+
+                    Rectangle {
+                        id: dragImageRect
+                        x: dragImage.displacement
+                        property int padding: 5
+                        width: dragImageText.implicitWidth + padding*2
+                        height: dragImageText.implicitHeight + padding*2
+                        color: "#cccccc"
+                        Text {
+                            id: dragImageText
+                            x: parent.padding
+                            y: parent.padding
+                            text: outputFileView.selectedIds.length + " file(s)"
+
+                            Component.onCompleted: {
+                                outputFileView.onSelectionUpdated.connect(function () {
+                                    text = outputFileView.selectedIds.length + " file(s)";
+                                });
+                            }
+                        }
+                    }
                 }
             }
 
@@ -232,6 +281,8 @@ Item {
                 var highlightNewItem = outputFileView.model.count === 0 || outputFileView.getAllSelected();
                 outputFileScrollView.outputFiles = paths;
                 outputFileView.model.clear();
+                outputFileView.selectedIds.length = 0;
+
                 paths.forEach( function (item) {
                     outputFileView.model.append({"name":item,"id":item});
                     if (highlightNewItem) {
