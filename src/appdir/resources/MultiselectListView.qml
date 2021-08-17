@@ -68,6 +68,7 @@ BetterScrollListView {
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
+                propagateComposedEvents: true
                 onClicked: {
                     if (mouse.button == Qt.LeftButton) {
                         if (!(mouse.modifiers & Qt.ControlModifier) && !(mouse.modifiers & Qt.ShiftModifier)) {
@@ -125,8 +126,9 @@ BetterScrollListView {
         anchors.fill: parent
         z: -1
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+        propagateComposedEvents: true
         onClicked: {
-            listview.selectedIndices = [];
+            listview.selectedIds = [];
             listview.updateSelection();
         }
     }

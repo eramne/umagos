@@ -10,11 +10,6 @@ Item {
     height: 480
     visible: true
 
-    Shortcut {
-        sequence: StandardKey.Paste
-        onActivated: openFromClipboardButton.onClicked()
-    }
-
     function setFileControlsEnabled(value) {
         convertButton.text = value ? "Convert" : "Cancel";
         inputFileViewDropArea.setAcceptDrop(value);
@@ -28,6 +23,14 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: "white"
+
+        MouseArea {
+            anchors.fill: parent
+            propagateComposedEvents: true
+            onClicked: {
+                window.forceActiveFocus();
+            }
+        }
     }
 
     ScrollView {
@@ -41,10 +44,25 @@ Item {
 
         background: Rectangle {
             anchors.fill: parent
-            border.color: "black"
+            border.color: inputFileView.activeFocus ? "blue" : "black"
             border.width: 1
             color: "transparent"
             z: 1
+
+            Shortcut {
+                enabled: inputFileView.activeFocus;
+                sequence: StandardKey.Paste
+                onActivated: openFromClipboardButton.onClicked()
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                propagateComposedEvents: true
+                onClicked: {
+                    inputFileView.forceActiveFocus();
+                    mouse.accepted = false;
+                }
+            }
 
             Text {
                 anchors.centerIn: parent
@@ -68,12 +86,13 @@ Item {
 
                 function setAcceptDrop(value) {
                     inputFileScrollView.opacity = value ? 1 : 0.5;
-                    enabled = value;
+                    inputFileScrollView.background.enabled = value;
+                    inputFileView.contentItem.enabled = value;
                 }
             }
         }
 
-        MultiselectListView {
+        contentItem: MultiselectListView {
             id: inputFileView
             objectName: "inputFileView"
             anchors.fill: parent
@@ -122,7 +141,7 @@ Item {
 
         background: Rectangle {
             anchors.fill: parent
-            border.color: "black"
+            border.color: outputFileView.activeFocus ? "blue" : "black"
             border.width: 1
             color: "transparent"
             z: 1
@@ -157,10 +176,14 @@ Item {
                     }
                     parent.Drag.mimeData = {"text/uri-list": urls};
                 }
+                onClicked: {
+                    outputFileView.forceActiveFocus();
+                    mouse.accepted = false;
+                }
             }
         }
 
-        MultiselectListView {
+        contentItem: MultiselectListView {
             id: outputFileView
             objectName: "outputFileView"
             anchors.fill: parent
