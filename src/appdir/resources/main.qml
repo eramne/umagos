@@ -38,6 +38,7 @@ Item {
         height: 184
         clip: true
         padding: 5
+
         background: Rectangle {
             anchors.fill: parent
             border.color: "black"
@@ -76,18 +77,17 @@ Item {
             id: inputFileView
             objectName: "inputFileView"
             anchors.fill: parent
-            //implicitWidth: contentItem.childrenRect.width
 
             function updateList(paths) {
                 inputFileView.model.clear();
                 inputFileView.selectedIndices.length = 0;
                 paths.forEach( function (item) {
-                    inputFileView.model.append({"name":item, "test":198});
+                    inputFileView.model.append({"name":item});
                 });
 
                 var max = 0;
                 for(var i = 0; i < inputFileView.count; i++) {
-                    inputFileView.currentIndex = i
+                    inputFileView.currentIndex = i;
                     var itemWidth = inputFileView.currentItem.contentItem.width;
                     max = Math.max(max, itemWidth);
                 }
@@ -117,6 +117,7 @@ Item {
         width: 188
         height: 184
         clip: true
+        padding: 5
         property var outputFiles: []
 
         background: Rectangle {
@@ -124,10 +125,10 @@ Item {
             border.color: "black"
             border.width: 1
             color: "transparent"
+            z: 1
 
             Text {
                 anchors.centerIn: parent
-                z: 1
                 text: qsTr("Drag converted files out from here")
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -145,9 +146,9 @@ Item {
 
             MouseArea {
                 id: dragArea
-                //drag.target: parent
                 anchors.fill: parent
                 drag.target: parent
+                propagateComposedEvents: true
                 onPressed: {
                     parent.Drag.imageSource = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D";
                     signalHandler.onOutputFileUpdate()
@@ -160,11 +161,10 @@ Item {
             }
         }
 
-        BetterScrollListView {
+        MultiselectListView {
             id: outputFileView
             objectName: "outputFileView"
             anchors.fill: parent
-            implicitWidth: contentItem.childrenRect.width
 
             function updateList(paths) {
                 outputFileScrollView.outputFiles = paths;
@@ -173,27 +173,26 @@ Item {
                     outputFileView.model.append({"name":item});
                 });
 
-                //because i can't get the content width correctly for some reason without this
                 var max = 0;
                 for(var i = 0; i < outputFileView.count; i++) {
-                    outputFileView.currentIndex = i
-                    var itemWidth = outputFileView.currentItem.childrenRect.width
-                    max = Math.max(max, itemWidth)
+                    outputFileView.currentIndex = i;
+                    var itemWidth = outputFileView.currentItem.contentItem.width;
+                    max = Math.max(max, itemWidth);
                 }
                 outputFileView.contentWidth = max;
 
                 outputFileView.scrollToBottom();
+                outputFileView.updateSelection();
             }
 
-            model: ListModel {}
-            delegate: Item {
-                height: 20
-                Row {
-                    Text {
-                        text: name
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.pixelSize: 12
-                    }
+            rowDelegate: Row {
+                padding: 5
+                width: text1.implicitWidth + padding*2
+                Text {
+                    id: text1
+                    text: itemData.name
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 12
                 }
             }
         }

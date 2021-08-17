@@ -55,8 +55,14 @@ BetterScrollListView {
                         }
 
                         if (mouse.modifiers & Qt.ControlModifier) {
-                            listview.selectedIndices.push(index);
-                            listview.selectedIndices = [...new Set(listview.selectedIndices)]; //remove duplicates
+                            if (!rowItem.selected) {
+                                listview.selectedIndices.push(index);
+                            } else {
+                                const indexToRemove = listview.selectedIndices.indexOf(index);
+                                if (indexToRemove > -1) {
+                                    listview.selectedIndices.splice(indexToRemove, 1);
+                                }
+                            }
                         }
                         if (mouse.modifiers & Qt.ShiftModifier) {
                             if (!(mouse.modifiers & Qt.ControlModifier)) {
@@ -67,7 +73,6 @@ BetterScrollListView {
                             for (var i = min; i <= max; i++) {
                                 listview.selectedIndices.push(i);
                             }
-                            listview.selectedIndices = [...new Set(listview.selectedIndices)]; //remove duplicates
                         } else {
                             listview.lastSelectedIndex = index;
                         }
@@ -78,6 +83,7 @@ BetterScrollListView {
                         listview.lastSelectedIndex = index;
                     }
                     listview.updateSelection();
+                    listview.selectedIndices = [...new Set(listview.selectedIndices)];
                 }
             }
         }
