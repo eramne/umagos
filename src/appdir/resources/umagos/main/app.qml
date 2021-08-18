@@ -44,11 +44,19 @@ Item {
             width: implicitWidth
             text: qsTr("Test")
         }
+        TabButton {
+            width: implicitWidth
+            text: qsTr("Testarwnrhgjooooooooooooooooobguitebgiouetgiutebuhirtwhvorhytuvhtuyrwvhytruwvhywrtvhoyurtowvhyturwvhyturwovhorhuytrwvhyutrowhyutorwvhouywrtvhouywrtvhyuwrtvhywrvhotyuvrwuyhtuyrwovhytwrvhoywruthvyourtw")
+        }
+
+        contentItem: BetterScrollListView {
+            orientation: ListView.Horizontal
+            model: bar.contentModel
+        }
     }
 
     StackLayout {
         id: pageview
-        //anchors.fill: parent
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom

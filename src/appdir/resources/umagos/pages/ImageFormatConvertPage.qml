@@ -163,8 +163,8 @@ Item {
                 }
                 inputFileView.contentWidth = max;
 
-                inputFileView.scrollToBottom();
                 inputFileView.updateSelection();
+                inputFileView.scrollToBottom();
             }
 
             rowDelegate: Row {
