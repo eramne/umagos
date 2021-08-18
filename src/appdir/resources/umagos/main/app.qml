@@ -3,6 +3,7 @@ import QtQuick.Window 2.14
 import QtQuick.Controls 2.3
 import QtQuick.Dialogs 1.0
 import QtQml.Models 2.2
+import umagos.components 1.0
 
 Item {
     id: window

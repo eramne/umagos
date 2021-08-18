@@ -1,0 +1,5 @@
+module umagos.components
+BetterScrollFlickable 1.0 BetterScrollFlickable.qml
+BetterScrollListView 1.0 BetterScrollListView.qml
+MultiselectListView 1.0 MultiselectListView.qml
+SearchComboBox 1.0 SearchComboBox.qml

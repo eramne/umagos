@@ -163,7 +163,9 @@ if __name__ == "__main__":
         appdir = os.path.dirname(sys.executable)
     conversionthread.appdir = appdir
 
-    qml_file = os.path.join(appdir, 'resources/main.qml')
+    view.engine().addImportPath(os.path.join(appdir, 'resources/'))
+
+    qml_file = os.path.join(appdir, 'resources/umagos/main/app.qml')
     view.setSource(QUrl.fromLocalFile(qml_file))
     if view.status() == QQuickView.Error:
         sys.exit(-1)
