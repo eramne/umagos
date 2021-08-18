@@ -44,7 +44,7 @@ def startConversion():
     global conversionThread
     conversionThread = threading.Thread(target=threadTask, args=())
     conversionThread.start()
-    view.rootObject().setFileControlsEnabled(False)
+    view.rootObject().findChild(QObject, "imageFormatConvertPage").setFileControlsEnabled(False)
 
 
 def threadTask():

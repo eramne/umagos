@@ -112,7 +112,7 @@ class CustomSignalHandler(QObject):
 
     @Slot()
     def onFinish(self):
-        view.rootObject().setFileControlsEnabled(True)
+        view.rootObject().findChild(QObject, "imageFormatConvertPage").setFileControlsEnabled(True)
         signalHandler.logEvent.emit(theme.SUCCESSTEXT, "Conversion finished.")
 
     outputFilesUpdateEvent = Signal()
