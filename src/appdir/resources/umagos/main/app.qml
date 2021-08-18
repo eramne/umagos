@@ -9,8 +9,8 @@ import umagos.pages 1.0
 
 Item {
     id: window
-    width: 640
-    height: 480 + bar.height
+    width: 640 + vtabbar.width
+    height: 480 + htabbar.height
     visible: true
 
     Rectangle {
@@ -34,43 +34,105 @@ Item {
     }
 
     TabBar {
-        id: bar
-        width: parent.width
+        id: vtabbar
+        height: parent.height
+        width: 100
         TabButton {
-            width: implicitWidth
-            text: qsTr("Image Conversion")
+            width: parent.width
+            text: qsTr("Image Tools")
         }
         TabButton {
-            width: implicitWidth
-            text: qsTr("Test")
-        }
-        TabButton {
-            width: implicitWidth
-            text: qsTr("Testarwnrhgjooooooooooooooooobguitebgiouetgiutebuhirtwhvorhytuvhtuyrwvhytruwvhywrtvhoyurtowvhyturwvhyturwovhorhuytrwvhyutrowhyutorwvhouywrtvhouywrtvhyuwrtvhywrvhotyuvrwuyhtuyrwovhytwrvhoywruthvyourtw")
+            width: parent.width
+            text: qsTr("Video Tools")
         }
 
         contentItem: BetterScrollListView {
-            orientation: ListView.Horizontal
-            model: bar.contentModel
+            orientation: ListView.Vertical
+            model: vtabbar.contentModel
+
+            Rectangle {
+                anchors.fill: parent
+                border.color: "black"
+                border.width: 1
+                color: "transparent"
+            }
         }
     }
 
     StackLayout {
-        id: pageview
-        anchors.left: parent.left
+        anchors.left: vtabbar.right
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.top: bar.bottom
-        currentIndex: bar.currentIndex
+        anchors.top: parent.top
+        currentIndex: vtabbar.currentIndex
 
-        ImageFormatConvertPage {
-            objectName: "imageFormatConvertPage"
+        Item {
+            TabBar {
+                id: htabbar
+                width: parent.width
+                TabButton {
+                    width: implicitWidth
+                    text: qsTr("Image Conversion")
+                }
+                TabButton {
+                    width: implicitWidth
+                    text: qsTr("Test")
+                }
+
+                contentItem: BetterScrollListView {
+                    orientation: ListView.Horizontal
+                    model: htabbar.contentModel
+                }
+            }
+
+            StackLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.top: htabbar.bottom
+                currentIndex: htabbar.currentIndex
+
+                ImageFormatConvertPage {
+                    objectName: "imageFormatConvertPage"
+                }
+
+                Item {
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Test page"
+                    }
+                }
+            }
         }
 
         Item {
-            Text {
-                anchors.centerIn: parent
-                text: "Test page"
+            TabBar {
+                id: htabbar2
+                width: parent.width
+                TabButton {
+                    width: implicitWidth
+                    text: qsTr("Video Conversion")
+                }
+
+                contentItem: BetterScrollListView {
+                    orientation: ListView.Horizontal
+                    model: htabbar2.contentModel
+                }
+            }
+
+            StackLayout {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.top: htabbar2.bottom
+                currentIndex: htabbar2.currentIndex
+
+                Item {
+                    Text {
+                        anchors.centerIn: parent
+                        text: "Coming Soon"
+                    }
+                }
             }
         }
     }
