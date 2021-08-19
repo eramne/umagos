@@ -6,7 +6,8 @@ ListView {
     visible: true
     interactive: false
     flickableDirection: Flickable.HorizontalAndVerticalFlick
-    highlightMoveDuration: 0
+    //highlightFollowsCurrentItem: true
+    //highlightMoveDuration: 0
     property real sensitivity: 1/3
     maximumFlickVelocity: 0
 
@@ -31,7 +32,13 @@ ListView {
             parent.ScrollBar.vertical.active = true;
             parent.ScrollBar.horizontal.active = true;
         }
-        currentIndex = count - 1;
+        //var tmpFollow = listview.highlightFollowsCurrentItem;
+        //var tmpIndex = listview.currentIndex;
+        //listview.highlightFollowsCurrentItem = true;
+        listview.currentIndex = count - 1;
+        //listview.scroll(0,0);
+        //listview.highlightFollowsCurrentItem = tmpFollow;
+        //listview.currentIndex = tmpIndex;
         if (parent instanceof ScrollView) {
             parent.ScrollBar.vertical.active = false;
             parent.ScrollBar.horizontal.active = false;

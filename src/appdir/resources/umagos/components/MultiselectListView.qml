@@ -11,16 +11,26 @@ BetterScrollListView {
     }
     property var selectedIds: []
     property int lastSelectedIndex: -1
+    highlightFollowsCurrentItem: false
+
+    onSelectedIdsChanged: {
+        listview.selectionUpdated();
+    }
 
     signal selectionUpdated()
 
-    function updateSelection() {
-        for (var i = 0; i < listmodel.count; i++) {
-            var identifier = idOf(i);
-            listview.itemAt(i).selected = listview.selectedIds.includes(identifier);
+    onSelectionUpdated: {
+        //remove all duplicates and items that no longer exist
+        var newIds = [];
+        for (var i = 0; i < listview.selectedIds.length; i++) {
+            var _id = listview.selectedIds[i];
+            if (!newIds.includes(_id) && listview.indexOf(_id) !== -1) {
+                newIds.push(_id);
+            }
         }
-        listview.selectedIds = [...new Set(listview.selectedIds)];
-        listview.selectionUpdated();
+        if (newIds.length !== listview.selectedIds.length) {
+            listview.selectedIds = newIds;
+        }
     }
 
     function indexOf(_id) {
@@ -33,13 +43,15 @@ BetterScrollListView {
     }
 
     function idOf(_index) {
-        listview.currentIndex = _index;
-        return listview.currentItem.identifier;
+        if (typeof listview.model.get(_index) === 'undefined') {
+            return -1;
+        }
+        var _id = listview.model.get(_index).id;
+        return typeof _id === 'undefined' ? _index : _id;
     }
 
-    function itemAt(_index) {
-        listview.currentIndex = _index;
-        return listview.currentItem;
+    function getSelected(_index) {
+        return listview.selectedIds.includes(idOf(_index));
     }
 
     model: ListModel {
@@ -49,13 +61,23 @@ BetterScrollListView {
         id: rowItem
         property var identifier: typeof model.id === 'undefined' ? index : model.id
         height: loader.item.height
-        property bool selected: listview.selectedIds.includes(identifier)
+        property bool selected: false
         property alias contentItem: loader.item
 
+        Component.onCompleted: {
+            if (typeof listview !== 'undefined') {
+                rowItem.selected = listview.getSelected(index);
+            }
+            listview.selectionUpdated.connect(function () {
+                if (typeof listview !== 'undefined') {
+                    rowItem.selected = listview.getSelected(index);
+                }
+            });
+        }
         Item {
             height: rowItem.height
             width: Math.max(listview.width, listview.contentWidth)
-            opacity: selected ? 1 : 0
+            opacity: rowItem.selected ? 1 : 0
 
             Loader {
                 sourceComponent: listview.highlightItem
@@ -108,7 +130,8 @@ BetterScrollListView {
                         }
                         listview.lastSelectedIndex = index;
                     }
-                    listview.updateSelection();
+                    listview.selectedIds = [...new Set(listview.selectedIds)];
+                    listview.selectionUpdated();
                 }
             }
         }
@@ -131,8 +154,8 @@ BetterScrollListView {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         propagateComposedEvents: true
         onClicked: {
-            listview.selectedIds = [];
-            listview.updateSelection();
+            listview.selectedIds.length = 0;
+            listview.selectionUpdated();
         }
     }
 }

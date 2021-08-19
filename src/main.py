@@ -26,7 +26,7 @@ supportedFormats = {
                ".j2k", ".jpg", ".jpeg", ".jxl", ".miff",
                ".mng", ".mpr",
                ".msl", ".mtv", ".mvg", ".otb", ".p7", ".palm",
-               ".pbm", ".pcd", ".pcds", ".pcx", ".pdb", ".pdf",
+               ".pbm", ".pcd", ".pcds", ".pcx", ".pdb",
                ".pfm", ".pgm", ".phm", ".pict", ".png",
                ".png00", ".png8", ".png24", ".png32", ".png48", ".png64",
                ".pnm", ".pocketmod", ".ppm", ".psb", ".psd", ".ptif",

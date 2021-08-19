@@ -31,7 +31,6 @@ Item {
             border.color: inputFileView.activeFocus ? "blue" : "black"
             border.width: 1
             color: "transparent"
-            z: 1
 
             MouseArea {
                 anchors.fill: parent
@@ -73,7 +72,7 @@ Item {
                     for (var i = 0; i < inputFileView.model.count; i++) {
                         inputFileView.selectedIds.push(inputFileView.idOf(i));
                     }
-                    inputFileView.updateSelection();
+                    inputFileView.selectionUpdated();
                 }
             }
 
@@ -147,6 +146,7 @@ Item {
             id: inputFileView
             objectName: "inputFileView"
             anchors.fill: parent
+            z: -1
 
             function updateList(paths) {
                 inputFileView.model.clear();
@@ -163,8 +163,8 @@ Item {
                 }
                 inputFileView.contentWidth = max;
 
-                inputFileView.updateSelection();
                 inputFileView.scrollToBottom();
+                outputFileView.selectionUpdated();
             }
 
             rowDelegate: Row {
@@ -204,7 +204,7 @@ Item {
                     for (var i = 0; i < outputFileView.model.count; i++) {
                         outputFileView.selectedIds.push(outputFileView.idOf(i));
                     }
-                    outputFileView.updateSelection();
+                    outputFileView.selectionUpdated();
                 }
             }
 
@@ -306,7 +306,7 @@ Item {
                             text: outputFileView.selectedIds.length + " file(s)"
 
                             Component.onCompleted: {
-                                outputFileView.onSelectionUpdated.connect(function () {
+                                outputFileView.selectionUpdated.connect(function () {
                                     text = outputFileView.selectedIds.length + " file(s)";
                                 });
                             }
@@ -353,12 +353,12 @@ Item {
                 outputFileView.contentWidth = max;
 
                 outputFileView.scrollToBottom();
-                outputFileView.updateSelection();
+                outputFileView.selectionUpdated();
             }
 
             function getAllSelected() {
                 for (var i = 0; i < outputFileView.model.count; i++) {
-                    if (!outputFileView.itemAt(i).selected) {
+                    if (!outputFileView.getSelected(i)) {
                         return false;
                     }
                 }
