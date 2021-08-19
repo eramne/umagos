@@ -50,6 +50,7 @@ Item {
                     backend.getClipboardUrls().forEach( function (url) {
                         backend.addToPaths(url);
                     });
+                    inputFileView.updateList(backend.getPaths());
                 }
             }
 
@@ -59,7 +60,8 @@ Item {
                 sequences: [StandardKey.Delete, StandardKey.Backspace, "Backspace"]
                 onActivated: {
                     backend.removeFromInputSelection(inputFileView.selectedIds);
-                    backend.updateInputFilesList();
+                    //backend.updateInputFilesList();
+                    inputFileView.updateList(backend.getPaths());
                 }
             }
 
@@ -131,6 +133,7 @@ Item {
                     drop.urls.forEach( function (url) {
                         backend.addToPaths(url);
                     });
+                    inputFileView.updateList(backend.getPaths());
                     inputFileView.forceActiveFocus();
                 }
 
@@ -163,7 +166,6 @@ Item {
                 }
                 inputFileView.contentWidth = max;
 
-                inputFileView.scrollToBottom();
                 outputFileView.selectionUpdated();
             }
 

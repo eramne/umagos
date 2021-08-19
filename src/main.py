@@ -52,24 +52,18 @@ class Backend(QObject):
     @Slot(str)
     def addToPaths(self, path):
         paths.append(uri_to_path(path))
-        self.updateInputFilesList()
 
-    @Slot()
-    def updateInputFilesList(self):
+    @Slot(result=list)
+    def getPaths(self):
         fileNames = [os.path.basename(path) for path in paths]
-        view.rootObject().findChild(QObject, "inputFileView").updateList(fileNames)
-
-    @Slot()
-    def clearInputSelection(self):
-        paths.clear()
-        self.updateInputFilesList()
+        return fileNames
 
     @Slot(list)
     def removeFromInputSelection(self, indices):
         global paths
         tmpPaths = []
         for i, val in enumerate(paths):
-            if not i in indices:
+            if i not in indices:
                 tmpPaths.append(val)
         paths = tmpPaths
 
