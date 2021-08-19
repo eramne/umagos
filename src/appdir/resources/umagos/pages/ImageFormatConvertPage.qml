@@ -60,8 +60,7 @@ Item {
                 sequences: [StandardKey.Delete, StandardKey.Backspace, "Backspace"]
                 onActivated: {
                     backend.removeFromInputSelection(inputFileView.selectedIds);
-                    //backend.updateInputFilesList();
-                    inputFileView.updateList(backend.getPaths());
+                    inputFileView.updateList();
                 }
             }
 
@@ -133,7 +132,7 @@ Item {
                     drop.urls.forEach( function (url) {
                         backend.addToPaths(url);
                     });
-                    inputFileView.updateList(backend.getPaths());
+                    inputFileView.updateList();
                     inputFileView.forceActiveFocus();
                 }
 
@@ -151,22 +150,31 @@ Item {
             anchors.fill: parent
             z: -1
 
-            function updateList(paths) {
-                inputFileView.model.clear();
-                inputFileView.selectedIds.length = 0;
+            function updateList() {
+                var paths = backend.getPaths();
                 paths.forEach( function (item) {
-                    inputFileView.model.append({"name":item});
+                    if (inputFileView.indexOf(item) === -1) {
+                        var file = backend.pathToName(item);
+                        inputFileView.model.append({"name":file,"id":item});
+                    }
                 });
 
-                var max = 0;
-                for(var i = 0; i < inputFileView.count; i++) {
-                    inputFileView.currentIndex = i;
-                    var itemWidth = inputFileView.currentItem.contentItem.width;
-                    max = Math.max(max, itemWidth);
+                for (var i = 0; i < inputFileView.model.count; i++) {
+                    var item = inputFileView.model.get(i);
+                    if (!paths.includes(item.id)) {
+                        inputFileView.model.remove(i);
+                        i--;
+                    }
                 }
-                inputFileView.contentWidth = max;
 
-                outputFileView.selectionUpdated();
+                contentWidth = contentItem.childrenRect.width;
+
+                var tmpCacheBuffer = inputFileView.cacheBuffer; //update the content width of the listview
+                inputFileView.cacheBuffer = 999999999;
+                inputFileView.contentWidth = inputFileView.contentItem.childrenRect.width;
+                inputFileView.cacheBuffer = tmpCacheBuffer;
+
+                inputFileView.selectionUpdated();
             }
 
             rowDelegate: Row {

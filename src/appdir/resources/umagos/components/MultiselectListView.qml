@@ -11,6 +11,7 @@ BetterScrollListView {
     }
     property var selectedIds: []
     property int lastSelectedIndex: -1
+    highlightFollowsCurrentItem: false
 
     onSelectedIdsChanged: {
         listview.selectionUpdated();
@@ -59,6 +60,7 @@ BetterScrollListView {
     delegate: Item {
         id: rowItem
         property var identifier: typeof model.id === 'undefined' ? index : model.id
+        width: loader.item.width
         height: loader.item.height
         property bool selected: false
         property alias contentItem: loader.item

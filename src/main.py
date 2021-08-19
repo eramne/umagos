@@ -55,15 +55,23 @@ class Backend(QObject):
 
     @Slot(result=list)
     def getPaths(self):
+        return paths
+
+    @Slot(result=list)
+    def getNames(self):
         fileNames = [os.path.basename(path) for path in paths]
         return fileNames
 
+    @Slot(str, result=str)
+    def pathToName(self, path):
+        return os.path.basename(path)
+
     @Slot(list)
-    def removeFromInputSelection(self, indices):
+    def removeFromInputSelection(self, pathsToRemove):
         global paths
         tmpPaths = []
-        for i, val in enumerate(paths):
-            if i not in indices:
+        for val in paths:
+            if val not in pathsToRemove:
                 tmpPaths.append(val)
         paths = tmpPaths
 
