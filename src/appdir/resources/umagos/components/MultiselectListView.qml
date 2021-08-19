@@ -11,7 +11,6 @@ BetterScrollListView {
     }
     property var selectedIds: []
     property int lastSelectedIndex: -1
-    highlightFollowsCurrentItem: false
 
     onSelectedIdsChanged: {
         listview.selectionUpdated();
