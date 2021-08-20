@@ -10,7 +10,7 @@ ListView {
     highlightMoveVelocity: -1
     maximumFlickVelocity: 0
 
-    property real sensitivity: 2/3
+    property real sensitivity: 1/2
     property real maxVelocity: 100
     property real targetX: 0
     property real targetY: 0
@@ -20,8 +20,8 @@ ListView {
         running: contentY !== targetY || contentX !== targetX
         repeat: true
         onTriggered: {
-            var velX = Math.ceil((listview.contentX - listview.targetX)/10);
-            var velY = Math.ceil((listview.contentY - listview.targetY)/10);
+            var velX = Math.ceil((listview.contentX - listview.targetX)/5);
+            var velY = Math.ceil((listview.contentY - listview.targetY)/5);
             listview.scroll(velX, velY);
         }
     }
