@@ -11,7 +11,7 @@ ListView {
     maximumFlickVelocity: 0
 
     property real sensitivity: 1/2
-    property real maxVelocity: 100
+    property real easeSpeed: 1/5
     property real targetX: 0
     property real targetY: 0
 
@@ -20,8 +20,8 @@ ListView {
         running: contentY !== targetY || contentX !== targetX
         repeat: true
         onTriggered: {
-            var velX = Math.ceil((listview.contentX - listview.targetX)/5);
-            var velY = Math.ceil((listview.contentY - listview.targetY)/5);
+            var velX = Math.ceil((listview.contentX - listview.targetX)*easeSpeed);
+            var velY = Math.ceil((listview.contentY - listview.targetY)*easeSpeed);
             listview.scroll(velX, velY);
         }
     }
@@ -80,7 +80,7 @@ ListView {
             parent.ScrollBar.vertical.active = true;
             parent.ScrollBar.horizontal.active = true;
         }
-        listview.currentIndex = listview.model.count - 1;
+        listview.targetY = listview.contentHeight;
         if (parent instanceof ScrollView) {
             parent.ScrollBar.vertical.active = false;
             parent.ScrollBar.horizontal.active = false;

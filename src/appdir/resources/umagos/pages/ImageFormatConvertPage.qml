@@ -152,10 +152,12 @@ Item {
 
             function updateList() {
                 var paths = backend.getPaths();
+                var shouldScrollToBottom = true;
                 paths.forEach( function (item) {
                     if (inputFileView.indexOf(item) === -1) {
                         var file = backend.pathToName(item);
                         inputFileView.model.append({"name":file,"id":item});
+                        shouldScrollToBottom = true;
                     }
                 });
 
@@ -173,6 +175,10 @@ Item {
                 inputFileView.cacheBuffer = tmpCacheBuffer;
 
                 inputFileView.selectionUpdated();
+
+                if (shouldScrollToBottom) {
+                    inputFileView.scrollToBottom();
+                }
             }
 
             delegate: Item {
