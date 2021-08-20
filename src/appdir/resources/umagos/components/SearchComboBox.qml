@@ -137,6 +137,11 @@ ComboBox {
             color: "white"
         }
 
+        onOpened: {
+            listview.targetX = listview.contentX;
+            listview.targetY = listview.contentY;
+        }
+
         contentItem: ScrollView {
             onContentHeightChanged: {
                 parent.height = contentHeight;
