@@ -167,8 +167,6 @@ Item {
                     }
                 }
 
-                contentWidth = contentItem.childrenRect.width;
-
                 var tmpCacheBuffer = inputFileView.cacheBuffer; //update the content width of the listview
                 inputFileView.cacheBuffer = 999999999;
                 inputFileView.contentWidth = inputFileView.contentItem.childrenRect.width;
@@ -177,14 +175,40 @@ Item {
                 inputFileView.selectionUpdated();
             }
 
-            rowDelegate: Row {
-                padding: 5
-                width: text2.implicitWidth + padding*2
-                Text {
-                    id: text2
-                    text: itemData.name
-                    anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 12
+            delegate: Item {
+                id: delegate
+                width: row.width
+                height: row.height
+                property bool selected: false
+
+                Component.onCompleted: {
+                    if (typeof inputFileView !== 'undefined') {
+                        delegate.selected = inputFileView.getSelected(index);
+                    }
+                    inputFileView.selectionUpdated.connect(function () {
+                        if (typeof inputFileView !== 'undefined') {
+                            delegate.selected = inputFileView.getSelected(index);
+                        }
+                    });
+                }
+
+                Rectangle {
+                    height: delegate.height
+                    width: Math.max(inputFileView.width, inputFileView.contentWidth)
+                    color: inputFileView.activeFocus ? "#aaaaff" : "#cccccc"
+                    opacity: delegate.selected ? 1 : 0
+                }
+
+                Row {
+                    id: row
+                    padding: 5
+                    width: text.implicitWidth + padding*2
+                    Text {
+                        id: text
+                        text: name
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pixelSize: 12
+                    }
                 }
             }
         }
@@ -354,13 +378,10 @@ Item {
                     }
                 });
 
-                var max = 0;
-                for(var i = 0; i < outputFileView.count; i++) {
-                    outputFileView.currentIndex = i;
-                    var itemWidth = outputFileView.currentItem.contentItem.width;
-                    max = Math.max(max, itemWidth);
-                }
-                outputFileView.contentWidth = max;
+                var tmpCacheBuffer = outputFileView.cacheBuffer; //update the content width of the listview
+                outputFileView.cacheBuffer = 999999999;
+                outputFileView.contentWidth = outputFileView.contentItem.childrenRect.width;
+                outputFileView.cacheBuffer = tmpCacheBuffer;
 
                 outputFileView.scrollToBottom();
                 outputFileView.selectionUpdated();
@@ -393,14 +414,40 @@ Item {
                 return urls;
             }
 
-            rowDelegate: Row {
-                padding: 5
-                width: text1.implicitWidth + padding*2
-                Text {
-                    id: text1
-                    text: itemData.name
-                    anchors.verticalCenter: parent.verticalCenter
-                    font.pixelSize: 12
+            delegate: Item {
+                id: delegate1
+                width: row1.width
+                height: row1.height
+                property bool selected: false
+
+                Component.onCompleted: {
+                    if (typeof outputFileView !== 'undefined') {
+                        delegate1.selected = outputFileView.getSelected(index);
+                    }
+                    outputFileView.selectionUpdated.connect(function () {
+                        if (typeof outputFileView !== 'undefined') {
+                            delegate1.selected = outputFileView.getSelected(index);
+                        }
+                    });
+                }
+
+                Rectangle {
+                    height: delegate1.height
+                    width: Math.max(outputFileView.width, outputFileView.contentWidth)
+                    color: outputFileView.activeFocus ? "#aaaaff" : "#cccccc"
+                    opacity: delegate1.selected ? 1 : 0
+                }
+
+                Row {
+                    id: row1
+                    padding: 5
+                    width: text1.implicitWidth + padding*2
+                    Text {
+                        id: text1
+                        text: name
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pixelSize: 12
+                    }
                 }
             }
         }
