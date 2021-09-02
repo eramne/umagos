@@ -5,15 +5,18 @@ from urllib.parse import urlparse, unquote
 from urllib.request import url2pathname
 from pathlib import Path
 import sys
-import conversionthread
-from theme import theme
+import shutil
+import platform
+import uuid
+import json
+from ShellTask import ShellTask
 
-from PySide2.QtCore import QObject, QUrl, Slot, Signal, QDir, QMimeData
+from PySide2.QtCore import QObject, QUrl, Slot, QDir, QMimeData
 from PySide2.QtQuick import QQuickView
 from PySide2.QtQuickControls2 import QQuickStyle
 from PySide2.QtGui import QGuiApplication
+from PySide2.QtQml import qmlRegisterType
 
-paths = []
 supportedFormats = {
     "images": [".png", ".jpeg", ".jpg", ".gif", ".webp", ".bmp",
                ".heic", ".raw", ".psd", ".tiff", ".hdr", ".exr",
@@ -36,58 +39,33 @@ supportedFormats = {
 }
 
 
-def uri_to_path(uri):
-    parsed = urlparse(uri)
-    host = "{0}{0}{mnt}{0}".format(os.path.sep, mnt=parsed.netloc)
-    return os.path.normpath(
-        os.path.join(host, url2pathname(unquote(parsed.path)))
-    )
-
-
 class Backend(QObject):
     def __init__(self):
         super(Backend, self).__init__()
-        # self._strtest = "String taken from python"
-
-    @Slot(str)
-    def addToPaths(self, path):
-        paths.append(uri_to_path(path))
-
-    @Slot(result=list)
-    def getPaths(self):
-        return paths
-
-    @Slot(result=list)
-    def getNames(self):
-        fileNames = [os.path.basename(path) for path in paths]
-        return fileNames
 
     @Slot(str, result=str)
     def pathToName(self, path):
         return os.path.basename(path)
 
-    @Slot(list)
-    def removeFromInputSelection(self, pathsToRemove):
-        global paths
-        tmpPaths = []
-        for val in paths:
-            if val not in pathsToRemove:
-                tmpPaths.append(val)
-        paths = tmpPaths
+    @Slot(str, result=str)
+    def uriToPath(self, uri):
+        parsed = urlparse(uri)
+        host = "{0}{0}{mnt}{0}".format(os.path.sep, mnt=parsed.netloc)
+        return os.path.normpath(
+            os.path.join(host, url2pathname(unquote(parsed.path)))
+        )
+
+    @Slot(str, result=str)
+    def pathToURI(self, path):
+        return Path(path).as_uri()
 
     @Slot(result="QVariantMap")
     def getSupportedFormats(self):
         return supportedFormats
 
-    @Slot()
-    def callConversion(self):
-        conversionthread.filePathQueue = paths.copy()
-        conversionthread.targetExt = view.rootObject().findChild(QObject, "outputFormatBox").property("currentText")
-        conversionthread.startStopConversion()
-
     @Slot(result=str)
-    def getOutputPathUrl(self):
-        return Path(conversionthread.outPath).as_uri()
+    def makeUUID(self):
+        return str(uuid.uuid4())
 
     @Slot(result=list)
     def getClipboardUrls(self):
@@ -101,47 +79,72 @@ class Backend(QObject):
         mimeData.setUrls(urls.split("\r\n"))
         clipboard.setMimeData(mimeData)
 
+    @Slot(result=str)
+    def getMagickPath(self):
+        magickPath = appdir + "/magick"
+        if platform.system() == "Windows":
+            magickPath = appdir + "/imagemagick/magick"
+        if platform.system() == "Darwin":
+            # assumes imagemagick is installed with homebrew on macOS
+            os.environ["PATH"] = "/usr/local/bin:" + os.environ["PATH"]
+            magickPath = shutil.which("magick")
+        return os.path.realpath(magickPath)
 
-class CustomSignalHandler(QObject):
-    def __init__(self):
-        super(CustomSignalHandler, self).__init__()
-        self.finishEvent.connect(self.onFinish)
-        self.outputFilesUpdateEvent.connect(self.onOutputFileUpdate)
-        self.logEvent.connect(self.onLogEvent)
-        self.progressEvent.connect(self.onProgressEvent)
+    @Slot(str, result=str)
+    def getFileNameWithoutExtension(self, path):
+        return os.path.splitext(os.path.basename(path))[0]
 
-    finishEvent = Signal()
+    @Slot(str, result=str)
+    def getFileExtension(self, path):
+        return os.path.splitext(os.path.basename(path))[1].lower()
+
+    @Slot(str, result=str)
+    def getFileName(self, path):
+        return os.path.basename(path)
+
+    @Slot(str, str, result=str)
+    def joinPaths(self, path1, path2):
+        return os.path.join(path1, path2)
+
+    @Slot(str, result=bool)
+    def fileExists(self, path):
+        return os.path.exists(path)
+
+    @Slot(str, result=str)
+    def getUsableName(self, originalOutputPath):
+        path = originalOutputPath
+        i = 0
+        while os.path.exists(path):
+            i += 1
+            path = "{0}/{1} ({2}){3}".format(os.path.dirname(originalOutputPath),
+                                             os.path.splitext(os.path.basename(originalOutputPath))[0],
+                                             i,
+                                             os.path.splitext(os.path.basename(originalOutputPath))[1].lower())
+        if i > 0:
+            originalName = os.path.basename(originalOutputPath)
+            newName = os.path.basename(path)
+        return path
+
+    @Slot(str, result=str)
+    def makeOutputPath(self, id):
+        path = os.path.realpath(os.path.join(appdir, "tmp/" + id + "/out"))
+        Path(path).mkdir(parents=True, exist_ok=True)
+        return path
+
+    @Slot(str)
+    def clearOutputDir(self, outPath):
+        shutil.rmtree(outPath)
+        os.makedirs(outPath)
 
     @Slot()
-    def onFinish(self):
-        view.rootObject().findChild(QObject, "imageFormatConvertPage").setFileControlsEnabled(True)
-        signalHandler.logEvent.emit(theme.SUCCESSTEXT, "Conversion finished.")
+    def clearTmpDir(self):
+        tmpPath = appdir + "/tmp/"
+        shutil.rmtree(tmpPath)
+        os.makedirs(tmpPath)
 
-    outputFilesUpdateEvent = Signal()
-
-    @Slot()
-    def onOutputFileUpdate(self):
-        path = conversionthread.outPath
-        files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
-        view.rootObject().findChild(QObject, "outputFileView").updateList(files)
-
-    logEvent = Signal(str, str)
-
-    @Slot(str, str)
-    def onLogEvent(self, color, text):
-        logObject = view.rootObject().findChild(QObject, "log")
-        logText = logObject.property("text")
-        logText += "<p style='color: {0}'>{1}</p>\n".format(color, text)
-        logObject.setProperty("text", logText)
-        view.rootObject().findChild(QObject, "logFlickable").scrollToBottom()
-
-    progressEvent = Signal(int, int)
-
-    @Slot(int, int)
-    def onProgressEvent(self, done, total):
-        progressBar = view.rootObject().findChild(QObject, "progressBar")
-        progressBar.setProperty("value", done)
-        progressBar.setProperty("to", total)
+    @Slot(str, result=list)
+    def getOutputFiles(self, outputPath):
+        return [f for f in os.listdir(outputPath) if os.path.isfile(os.path.join(outputPath, f))]
 
 
 if __name__ == "__main__":
@@ -151,37 +154,31 @@ if __name__ == "__main__":
     app.setApplicationName("umagos")
 
     view = QQuickView()
-    conversionthread.app = app
-    conversionthread.view = view
     view.setResizeMode(QQuickView.SizeRootObjectToView)
     QQuickStyle.setStyle("Fusion")
 
     context = view.engine().rootContext()
     backend = Backend()
-    context.setContextProperty("backend", backend)
+    context.setContextProperty("Backend", backend)
+
+    qmlRegisterType(ShellTask, "umagos.shellTask", 1, 0, "ShellTask")
 
     appdir = QDir.currentPath()
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         appdir = os.path.dirname(sys.executable)
-    conversionthread.appdir = appdir
+
+    backend.clearTmpDir()
 
     view.engine().addImportPath(os.path.join(appdir, 'resources/'))
+
+    style_file = os.path.join(appdir, 'resources/umagos/styles/Light.json')
+    style = json.loads(Path(style_file).read_text())
+    context.setContextProperty("Style", style)
 
     qml_file = os.path.join(appdir, 'resources/umagos/main/app.qml')
     view.setSource(QUrl.fromLocalFile(qml_file))
     if view.status() == QQuickView.Error:
         sys.exit(-1)
-
-    signalHandler = CustomSignalHandler()
-    conversionthread.signalHandler = signalHandler
-    context.setContextProperty("signalHandler", signalHandler)
-
-    conversionthread.supportedFormats = supportedFormats
-    conversionthread.outPath = appdir + "/tmp/converted"
-
-    conversionthread.clearOutputDir()
-
-    signalHandler.logEvent.emit(theme.INFOTEXT,"Info, errors, and warnings will appear here.")
 
     view.setTitle("umagos")
     view.show()

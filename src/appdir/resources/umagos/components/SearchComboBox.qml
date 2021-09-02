@@ -45,13 +45,13 @@ ComboBox {
         popup.y = height - 1;
         popup.closed.connect(onAccepted);
         contentItem.onCursorPositionChanged.connect(function () {
-            updateFilteredList(backend.getSupportedFormats().images);
+            updateFilteredList(Backend.getSupportedFormats().images);
         });
         contentItem.onSelectionEndChanged.connect(function () {
-            updateFilteredList(backend.getSupportedFormats().images);
+            updateFilteredList(Backend.getSupportedFormats().images);
         });
         contentItem.onSelectionStartChanged.connect(function () {
-            updateFilteredList(backend.getSupportedFormats().images);
+            updateFilteredList(Backend.getSupportedFormats().images);
         });
     }
 

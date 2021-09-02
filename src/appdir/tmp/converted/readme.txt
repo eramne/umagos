@@ -1,1 +1,0 @@
-When the application or conversion starts, this folder is cleared. Whenever a conversion finishes, the output file is made here. This folder does not get copied into the application folder after building, but a new directory with the same name, "tmp/converted/" is created.
