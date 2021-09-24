@@ -1,1 +1,0 @@
-used for running in qt creator and moving files into the application's directory after building. didn't know what else to call it, so i just named it appdir

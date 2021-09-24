@@ -1,3 +1,0 @@
-{
-    "files": ["appdir/resources/umagos/pages/qmldir","appdir/resources/SearchComboBox.qml","appdir/resources/umagos/styles/Light.json","ShellTask.py","appdir/resources/BetterScrollFlickable.qml","appdir/resources/umagos/components/SearchComboBox.qml","appdir/resources/main.qml","appdir/resources/MultiselectListView.qml","appdir/resources/umagos/pages/ImageFormatConvertPage.qml","appdir/resources/umagos/components/MultiselectListView.qml","appdir/resources/umagos/main/app.qml","appdir/resources/umagos/components/BetterScrollFlickable.qml","main.py","appdir/resources/BetterScrollListView.qml","appdir/resources/umagos/components/qmldir","appdir/resources/umagos/components/BetterScrollListView.qml"]
-}
