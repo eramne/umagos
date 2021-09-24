@@ -17,6 +17,8 @@ object_script.*.Debug
 /.qmake.stash
 *.pro.user
 *.pro.user.*
+*.pro.qtds
+*.pro.qtds.*
 *.qbs.user
 *.qbs.user.*
 *.moc
@@ -41,3 +43,5 @@ target_wrapper.*
 
 # QtCreator CMake
 CMakeLists.txt.user*
+
+*/.vs
