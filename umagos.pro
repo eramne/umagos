@@ -59,3 +59,10 @@ win32 {
     DEPENDPATH += $$freeimagelib.path
     QMAKE_PRE_LINK = \"cp\" \"$$freeimagelib.path/FreeImage.dll\" \"$$OUT_PWD/$${BUILDMODE}/FreeImage.dll\"
 }
+
+unix:!macx: LIBS += -L$$PWD/lib/FreeImage/linux/ -lfreeimage
+
+INCLUDEPATH += $$PWD/lib/FreeImage/linux
+DEPENDPATH += $$PWD/lib/FreeImage/linux
+
+unix:!macx: PRE_TARGETDEPS += $$PWD/lib/FreeImage/linux/libfreeimage.a
