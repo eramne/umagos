@@ -41,34 +41,21 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-#win32 {
-#    # windows
-#
-#    contains(QMAKE_TARGET.arch, x86) {
-#        #x86
-#
-#        freeimagelib.path = $$PWD/lib/FreeImage/x32
-#    } else {
-#        #x64
-#
-#        freeimagelib.path = $$PWD/lib/FreeImage/x64
-#    }
-#
-#    LIBS += -L$$freeimagelib.path -lFreeImage
-#    INCLUDEPATH += $$freeimagelib.path
-#    DEPENDPATH += $$freeimagelib.path
-#    QMAKE_PRE_LINK = \"C:\MinGW\msys\1.0\bin\cp.exe\" \"$$freeimagelib.path/FreeImage.dll\" \"$$OUT_PWD/$${BUILDMODE}/FreeImage.dll\"
-#}
+win32 {
+    # windows
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/FreeImagePlus/release/ -lfreeimageplus
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/FreeImagePlus/debug/ -lfreeimageplus
-else:unix: LIBS += -L$$PWD/lib/FreeImagePlus/ -lfreeimageplus
+    contains(QMAKE_TARGET.arch, x86) {
+        #x86
 
-INCLUDEPATH += $$PWD/lib/FreeImagePlus
-DEPENDPATH += $$PWD/lib/FreeImagePlus
+        freeimagelib.path = $$PWD/lib/FreeImage/win/x32
+    } else {
+        #x64
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/lib/FreeImagePlus/release/libfreeimageplus.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/lib/FreeImagePlus/debug/libfreeimageplus.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/lib/FreeImagePlus/release/freeimageplus.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/lib/FreeImagePlus/debug/freeimageplus.lib
-else:unix: PRE_TARGETDEPS += $$PWD/lib/FreeImagePlus/libfreeimageplus.a
+        freeimagelib.path = $$PWD/lib/FreeImage/win/x64
+    }
+
+    LIBS += -L$$freeimagelib.path -lFreeImage
+    INCLUDEPATH += $$freeimagelib.path
+    DEPENDPATH += $$freeimagelib.path
+    QMAKE_PRE_LINK = \"cp\" \"$$freeimagelib.path/FreeImage.dll\" \"$$OUT_PWD/$${BUILDMODE}/FreeImage.dll\"
+}
