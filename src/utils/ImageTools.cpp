@@ -44,5 +44,5 @@ bool ImageTools::writeImage(FIBITMAP* bitmap, const char* file, int flag) {
 
 bool ImageTools::convertImage(const char* inputFile, const char* outputFile) {
     FIBITMAP* bitmap = readImage(inputFile);
-    writeImage(bitmap, outputFile);
+    return writeImage(bitmap, outputFile);
 }
