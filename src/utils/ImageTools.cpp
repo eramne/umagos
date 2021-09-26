@@ -2,7 +2,7 @@
 
 ImageTools::ImageTools() {}
 
-// pretty much just copied and pasted from the FreeImage docs, just renamed some variables to make it easier to read
+/*// pretty much just copied and pasted from the FreeImage docs, just renamed some variables to make it easier to read
 FIBITMAP* ImageTools::readImage(const char* file, int flag) {
     FREE_IMAGE_FORMAT format = FIF_UNKNOWN;
     // check the file format
@@ -40,9 +40,12 @@ bool ImageTools::writeImage(FIBITMAP* bitmap, const char* file, int flag) {
         }
     }
     return success;
-}
+}*/
 
 bool ImageTools::convertImage(const char* inputFile, const char* outputFile) {
-    FIBITMAP* bitmap = readImage(inputFile);
-    return writeImage(bitmap, outputFile);
+    fipImage image(FIT_BITMAP);
+    image.load(inputFile);
+    return image.save(outputFile);
+    //FIBITMAP* bitmap = readImage(inputFile);
+    //return writeImage(bitmap, outputFile);
 }

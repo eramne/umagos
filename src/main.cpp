@@ -25,7 +25,8 @@ int main(int argc, char* argv[]) {
     engine.load(url);
 
     qInfo("Starting conversion.");
-    ImageTools::convertImage("C:/Users/student/Desktop/image8.jpg", "C:/Users/student/Desktop/image8.png");
+    //ImageTools::convertImage("C:/Users/student/Desktop/image8.jpg", "C:/Users/student/Desktop/image8.png");
+    ImageTools::convertImage("/home/eramne/Desktop/image.jpg", "/home/eramne/Desktop/image.png");
 
     return app.exec();
 }
